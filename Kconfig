@@ -1,0 +1,32 @@
+mainmenu "Blep1 application"
+
+config BLEP1_SERIAL
+  bool "Receive data from uart"
+  default n
+
+config BLEP1_SIM_UART
+  default n
+  bool "Send dummy data over tx line"
+
+config BLEP1_SIM_PIPE
+  default n
+  bool "Send dummy data directly to fifo"
+
+config BLEP1_SIM_TELEGRAM
+  default n
+  bool "Send dummy telegrams to telegram handler"
+
+config BLEP1_FRAMER_TASK
+  default y
+  bool "Run framer task"
+
+config BLEP1_PARSER_TASK
+  default y
+  bool "Run parser task"
+
+config BLEP1_HANDLER_TASK
+  default y
+  bool "Run parser task"
+
+source "Kconfig.zephyr"
+
