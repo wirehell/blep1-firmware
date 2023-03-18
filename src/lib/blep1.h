@@ -42,21 +42,6 @@ struct data_definition {
     enum Unit unit;
 };
 
-struct gatt_ch {
-    enum Item item;
-    const struct bt_uuid_128 *uuid;
-    const struct bt_gatt_cpf *cpf;
-    char *description;
-};
-
-
-extern const struct bt_uuid_128 METER_ACTIVE_ENERGY_IN_UUID;
-extern const struct bt_uuid_128 METER_ACTIVE_ENERGY_OUT_UUID;
-extern const struct bt_uuid_128 ACTIVE_ENERGY_IN_UUID;
-extern const struct bt_uuid_128 ACTIVE_ENERGY_OUT_UUID;
-
 extern const struct data_definition data_definition_table[];
-extern const struct gatt_ch gatt_ch_table[];
-
 
 #endif /* BLEP1_HEADER_H */
