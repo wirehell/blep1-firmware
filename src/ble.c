@@ -215,7 +215,7 @@ static struct bt_conn_auth_cb auth_cb_display = {
 //TODO check
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_CUSTOM_SERVICE_VAL),
+	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_BLEP1_SERVICE_VAL),
 };
 
 void bt_ready(void)
