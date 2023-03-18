@@ -7,9 +7,8 @@
 #include <sys/types.h>
 #include <regex.h>
 
-#include "parser.h"
-#include "blep1.h"
-#include "uart_p1.h"
+#include "lib/parser.h"
+#include "lib/blep1.h"
 
 #if CONFIG_BLEP1_PARSER_TASK
 

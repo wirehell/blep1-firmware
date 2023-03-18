@@ -1,7 +1,7 @@
 #include <regex.h>
-#include "parser.h"
-#include "common.h"
-#include "telegram.h"
+#include "lib/parser.h"
+#include "lib/common.h"
+#include "lib/telegram.h"
 
 #include <zephyr/ztest.h>
 #include <zephyr/net/buf.h>

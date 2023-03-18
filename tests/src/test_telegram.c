@@ -1,6 +1,6 @@
 #include <regex.h>
-#include "telegram.h"
-#include "common.h"
+#include "lib/telegram.h"
+#include "lib/common.h"
 
 #include <zephyr/ztest.h>
 

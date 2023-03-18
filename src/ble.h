@@ -3,7 +3,7 @@
 
 #include <zephyr/bluetooth/gatt.h>
 
-#include "telegram.h"
+#include "lib/telegram.h"
 
 struct user_data {
 	int item;

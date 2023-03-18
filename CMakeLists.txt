@@ -10,6 +10,6 @@ SET(CMAKE_CPP_FLAGS "-O0")
 set(CMAKE_BUILD_TYPE Debug)
 
 FILE(GLOB app_sources src/*.c)
-target_sources(app PRIVATE
-  ${app_sources}
-  )
+FILE(GLOB lib_sources src/lib/*.c)
+target_sources(app PRIVATE ${app_sources})
+target_sources(app PRIVATE ${lib_sources})

@@ -1,5 +1,5 @@
 #include "line_log.h"
-#include "common.h"
+#include "lib/common.h"
 
 #include "zephyr/logging/log.h"
 

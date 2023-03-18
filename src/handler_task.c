@@ -5,11 +5,11 @@
 #include <zephyr/sys/crc.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <regex.h>
 
-#include "telegram.h"
 #include "handler_task.h"
-#include "blep1.h"
+
+#include "lib/telegram.h"
+#include "lib/blep1.h"
 
 #if CONFIG_BLEP1_HANDLER_TASK
 

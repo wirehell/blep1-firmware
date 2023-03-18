@@ -7,11 +7,9 @@ SET(CMAKE_CPP_FLAGS "-O0")
 set(CMAKE_BUILD_TYPE Debug)
 
 FILE(GLOB app_sources src/*.c)
-target_sources(app PRIVATE ${app_sources})
-target_sources(app PRIVATE ../src/blep1.c)
-target_sources(app PRIVATE ../src/parser.c)
-target_sources(app PRIVATE ../src/telegram_framer.c)
-target_sources(app PRIVATE ../src/common.c)
-target_sources(app PRIVATE ../src/telegram.c)
+FILE(GLOB lib_sources ../src/lib/*.c)
 
 target_include_directories(app PRIVATE ../src)
+
+target_sources(app PRIVATE ${app_sources})
+target_sources(app PRIVATE ${lib_sources})

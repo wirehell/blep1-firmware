@@ -9,9 +9,9 @@
 #include <regex.h>
 
 #include "framer_task.h"
-#include "blep1.h"
+#include "lib/blep1.h"
 #include "line_log.h"
-#include "telegram_framer.h"
+#include "lib/telegram_framer.h"
 
 #define READ_TIMEOUT_MS 200
 #define MAX_TELEGRAM_SIZE 8192

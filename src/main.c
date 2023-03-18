@@ -5,14 +5,15 @@
 #include <zephyr/logging/log.h>
 #include <math.h>
 
+#include "lib/blep1.h"
+#include "lib/parser.h"
+#include "lib/telegram.h"
+
 #include "uart_p1.h"
-#include "blep1.h"
-#include "parser.h"
-#include "parser_task.h"
-#include "ble.h"
 #include "framer_task.h"
-#include "telegram.h"
+#include "parser_task.h"
 #include "handler_task.h"
+#include "ble.h"
 
 K_PIPE_DEFINE(rx_pipe, 8192, 4);
 K_FIFO_DEFINE(telegram_frame_fifo);

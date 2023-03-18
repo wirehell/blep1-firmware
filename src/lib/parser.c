@@ -11,9 +11,7 @@
 #include "parser.h"
 #include "common.h"
 #include "telegram.h"
-
 #include "blep1.h"
-#include "uart_p1.h"
 
 LOG_MODULE_REGISTER(parser, LOG_LEVEL_DBG);
 

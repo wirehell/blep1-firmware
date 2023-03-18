@@ -8,10 +8,12 @@
 #include <zephyr/bluetooth/gatt.h>
 #include "zephyr/bluetooth/services/bas.h"
 
-#include "blep1.h"
 #include "ble.h"
-#include "common.h"
 #include "nus_log.h"
+
+#include "lib/blep1.h"
+#include "lib/common.h"
+
 
 LOG_MODULE_REGISTER(ble, LOG_LEVEL_DBG);
 

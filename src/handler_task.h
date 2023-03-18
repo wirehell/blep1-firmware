@@ -2,7 +2,7 @@
 #define TELEGRAM_HANDLER_TASK_HEADER_H
 
 #include <zephyr/kernel.h>
-#include "telegram.h"
+#include "lib/telegram.h"
 
 typedef void (*update_value_store_fun)(struct data_item *);
 
