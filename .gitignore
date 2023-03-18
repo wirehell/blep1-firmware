@@ -1,0 +1,5 @@
+.vscode/
+build/
+.sw?
+tests/build/
+tests/.vscode/
