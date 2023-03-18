@@ -14,6 +14,12 @@ struct parser {
     regex_t double_long_unsigned_4_3_regex;
     regex_t long_unsigned_3_1_regex;
     regex_t long_signed_3_1_regex;
+    regex_t unit_kwh_regex;
+    regex_t unit_kw_regex;
+    regex_t unit_kvarh_regex;
+    regex_t unit_kvar_regex;
+    regex_t unit_volt_regex;
+    regex_t unit_ampere_regex;
 };
 
 struct parser * parser_init();

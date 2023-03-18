@@ -140,7 +140,7 @@ ZTEST(parser_suite, test_landgyr_e360) {
 
 	struct telegram *telegram = parse_telegram(parser, buf);
 	zassert_not_null(telegram);
-	zassert_equal(telegram_items_count(telegram), 4);
+	zassert_equal(telegram_items_count(telegram), 8);
 
 	net_buf_unref(buf);
 	parser_free(parser);

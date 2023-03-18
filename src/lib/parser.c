@@ -20,11 +20,25 @@ LOG_MODULE_REGISTER(parser, LOG_LEVEL_DBG);
 #define DATA_REGEX_DOUBLE_LONG_UNSIGNED_8_3 "^([0-9]{8})\\.([0-9]{3})$"
 #define DATA_REGEX_DOUBLE_LONG_UNSIGNED_4_3 "^([0-9]{4})\\.([0-9]{3})$"
 
+#define UNIT_REGEX_K_WATT_HOUR "^(kwh)|(kWh)$"
+#define UNIT_REGEX_K_WATT "^(kw)|(kW)$"
+#define UNIT_REGEX_K_VOLT_AMPERE_HOUR_REACTIVE "^(kvarh)|(kVarh)|(kVArh)|(kVARh)$"
+#define UNIT_REGEX_K_VOLT_AMPERE_REACTIVE "^(kvar)|(kVar)|(kVAr)|(kVAR)$"
+#define UNIT_REGEX_VOLT "^V$"
+#define UNIT_REGEX_AMPERE "^A$"
+
+
 void parser_free(struct parser *parser) {
     regfree(&parser->header_regex);
     regfree(&parser->data_line_regex);
     regfree(&parser->double_long_unsigned_8_3_regex);
     regfree(&parser->double_long_unsigned_4_3_regex);
+    regfree(&parser->unit_kwh_regex);
+    regfree(&parser->unit_kw_regex);
+    regfree(&parser->unit_kvarh_regex);
+    regfree(&parser->unit_kvar_regex);
+    regfree(&parser->unit_volt_regex);
+    regfree(&parser->unit_ampere_regex);
     common_heap_free(parser);
 }
 
@@ -56,6 +70,36 @@ struct parser * parser_init() {
     reti = regcomp(&parser->double_long_unsigned_4_3_regex, DATA_REGEX_DOUBLE_LONG_UNSIGNED_4_3, REG_EXTENDED);
     if (reti) {
         LOG_ERR("Could not compile regex for double-long-unsigned-4-3");
+        return NULL;
+    }
+    reti = regcomp(&parser->unit_kwh_regex, UNIT_REGEX_K_WATT_HOUR, REG_EXTENDED);
+    if (reti) {
+        LOG_ERR("Could not compile regex for kWH");
+        return NULL;
+    }
+    reti = regcomp(&parser->unit_kw_regex, UNIT_REGEX_K_WATT, REG_EXTENDED);
+    if (reti) {
+        LOG_ERR("Could not compile regex for kW");
+        return NULL;
+    }
+    reti = regcomp(&parser->unit_kvarh_regex, UNIT_REGEX_K_VOLT_AMPERE_HOUR_REACTIVE, REG_EXTENDED);
+    if (reti) {
+        LOG_ERR("Could not compile regex for kvarh");
+        return NULL;
+    }
+    reti = regcomp(&parser->unit_kvar_regex, UNIT_REGEX_K_VOLT_AMPERE_REACTIVE, REG_EXTENDED);
+    if (reti) {
+        LOG_ERR("Could not compile regex for kvar");
+        return NULL;
+    }
+    reti = regcomp(&parser->unit_volt_regex, UNIT_REGEX_VOLT, REG_EXTENDED);
+    if (reti) {
+        LOG_ERR("Could not compile regex for kvar");
+        return NULL;
+    }
+    reti = regcomp(&parser->unit_ampere_regex, UNIT_REGEX_AMPERE, REG_EXTENDED);
+    if (reti) {
+        LOG_ERR("Could not compile regex for kvar");
         return NULL;
     }
 
@@ -107,7 +151,7 @@ static uint32_t parse_double_long_unsigned(struct parser *parser, regex_t *re, c
 
     err = regexec(re, data, 3, pmatch, 0);
     if (err != 0) {
-	    LOG_WRN("Failed to parse double-long-unsigned: %s", data);
+	    LOG_ERR("Failed to parse double-long-unsigned: %s", data);
         errno = EINVAL;
 	    return 0;
     }
@@ -158,17 +202,43 @@ int parse_value_into(struct parser *parser, struct data_item *data_item, char *d
     return 0;
 }
 
-int parse_value(struct parser *parser, struct data_item *data_item, const struct data_definition *def, char *data, char *unit) {
-    if (unit == NULL && def->unit != NULL) {
-        LOG_ERR("Expected a unit (%s), but recived none", def->unit);
+regex_t * parser_regex_for_unit(struct parser *parser, enum Unit unit) {
+    switch(unit) {
+        case K_WATT_HOUR:                   return &parser->unit_kwh_regex; 
+        case K_VOLT_AMPERE_HOUR_REACTIVE:   return &parser->unit_kvarh_regex; 
+        case K_WATT:                        return &parser->unit_kw_regex;
+        case K_VOLT_AMPERE_REACTIVE:        return &parser->unit_kvar_regex;
+        case VOLT:                          return &parser->unit_volt_regex;
+        case AMPERE:                        return &parser->unit_ampere_regex;
+        default:
+    }
+    LOG_ERR("Not implemented unit: %d", unit);
+    return NULL;
+}
+
+int check_unit(struct parser *parser, char *unit, enum Unit expected_unit) {
+    if (unit == NULL && expected_unit != NONE) {
+        LOG_ERR("Expected a unit (%d), but recived none", unit);
         return -1;
     }
-    if (unit != NULL && def->unit == NULL) {
+    if (unit != NULL && expected_unit == NONE) {
         LOG_ERR("Did not expect unit, but recived one (%s)", unit);
         return -1;
     }
-    if (strcmp(unit, def->unit) != 0) {
-        LOG_ERR("Unit mismatch, expected: %s, received: %s", def->unit, unit);
+    regex_t *unit_regex = parser_regex_for_unit(parser, expected_unit);
+    if (unit_regex == NULL) {
+        return -1;
+    }
+    int err = regexec(unit_regex, unit, 0, NULL, 0);
+    if (err != 0) {
+        LOG_ERR("Unit regex failed, err: %d unit: %d, string: %s", err, expected_unit, unit);
+        return -1;
+    }
+    return 0;
+}
+
+int parse_value(struct parser *parser, struct data_item *data_item, const struct data_definition *def, char *data, char *unit) {
+    if (check_unit(parser, unit, def->unit) < 0) {
         return -1;
     }
     data_item->item = def->item;
@@ -177,7 +247,6 @@ int parse_value(struct parser *parser, struct data_item *data_item, const struct
         LOG_ERR("Could not parse value");
         return -1; 
     }
-
     return 0;
 }
 

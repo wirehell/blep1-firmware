@@ -24,11 +24,22 @@ enum Item {
     _ITEM_COUNT,
 };
 
+enum Unit {
+    NONE,
+    K_WATT_HOUR,
+    K_VOLT_AMPERE_HOUR_REACTIVE,
+    K_WATT,
+    K_VOLT_AMPERE_REACTIVE,
+    VOLT,
+    AMPERE,
+    _UNIT_COUNT,
+};
+
 struct data_definition {
     enum Item item;
     char *obis;
     enum Format format;
-    char *unit;
+    enum Unit unit;
 };
 
 struct gatt_ch {
@@ -37,6 +48,7 @@ struct gatt_ch {
     const struct bt_gatt_cpf *cpf;
     char *description;
 };
+
 
 extern const struct bt_uuid_128 METER_ACTIVE_ENERGY_IN_UUID;
 extern const struct bt_uuid_128 METER_ACTIVE_ENERGY_OUT_UUID;
