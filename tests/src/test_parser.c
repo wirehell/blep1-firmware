@@ -29,6 +29,16 @@ ZTEST(parser_suite, test_data_line_unknown_obis) {
 	parser_free(parser);
 }
 
+ZTEST(parser_suite, test_data_line_1_7_0) {
+	struct parser *parser = parser_init();
+	char str[] = "1-0:1.7.0(0002.123*kW)";
+	struct data_item data_item;
+	zassert_ok(parse_data_line(parser, &data_item, str));
+	zassert_equal(data_item.item, ACTIVE_ENERGY_IN);
+	zassert_equal(data_item.value.double_long_unsigned, 2123LU);
+	parser_free(parser);
+}
+
 ZTEST(parser_suite, test_data_line_1_8_0) {
 	struct parser *parser = parser_init();
 	char str[] = "1-0:1.8.0(00006678.394*kWh)";
@@ -39,13 +49,33 @@ ZTEST(parser_suite, test_data_line_1_8_0) {
 	parser_free(parser);
 }
 
-ZTEST(parser_suite, test_data_line_1_7_0) {
+ZTEST(parser_suite, test_data_line_2_8_0) {
 	struct parser *parser = parser_init();
-	char str[] = "1-0:1.7.0(0002.123*kW)";
+	char str[] = "1-0:2.8.0(00016678.394*kWh)";
 	struct data_item data_item;
 	zassert_ok(parse_data_line(parser, &data_item, str));
-	zassert_equal(data_item.item, ACTIVE_ENERGY_IN);
-	zassert_equal(data_item.value.double_long_unsigned, 2123LU);
+	zassert_equal(data_item.item, METER_ACTIVE_ENERGY_OUT);
+	zassert_equal(data_item.value.double_long_unsigned, 16678394LU);
+	parser_free(parser);
+}
+
+ZTEST(parser_suite, test_data_line_3_8_0) {
+	struct parser *parser = parser_init();
+	char str[] = "1-0:3.8.0(00006678.394*kvarh)";
+	struct data_item data_item;
+	zassert_ok(parse_data_line(parser, &data_item, str));
+	zassert_equal(data_item.item, METER_REACTIVE_ENERGY_IN);
+	zassert_equal(data_item.value.double_long_unsigned, 6678394LU);
+	parser_free(parser);
+}
+
+ZTEST(parser_suite, test_data_line_4_8_0) {
+	struct parser *parser = parser_init();
+	char str[] = "1-0:4.8.0(00006678.394*kvarh)";
+	struct data_item data_item;
+	zassert_ok(parse_data_line(parser, &data_item, str));
+	zassert_equal(data_item.item, METER_REACTIVE_ENERGY_OUT);
+	zassert_equal(data_item.value.double_long_unsigned, 6678394LU);
 	parser_free(parser);
 }
 

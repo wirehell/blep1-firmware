@@ -14,20 +14,18 @@
 #include "lib/blep1.h"
 #include "lib/common.h"
 
-
 LOG_MODULE_REGISTER(ble, LOG_LEVEL_DBG);
 
-//TODO change
 #define BT_UUID_CUSTOM_SERVICE_VAL BT_UUID_128_ENCODE(0xb3b43e2e, 0x1e86, 0x46f5, 0xa156, 0x4ffd0c7c13ac)
 
-static struct bt_uuid_128 blep1_uuid = BT_UUID_INIT_128(BT_UUID_CUSTOM_SERVICE_VAL);
+static struct bt_uuid_128 blep1_uuid = BT_UUID_INIT_128(BT_UUID_CUSTOM-SERVICE_VAL);
 
 static struct bt_uuid_16 CHRC_UUID = BT_UUID_INIT_16(BT_UUID_GATT_CHRC_VAL);
 static struct bt_uuid_16 CUD_UUID = BT_UUID_INIT_16(BT_UUID_GATT_CUD_VAL);
 static struct bt_uuid_16 CPF_UUID = BT_UUID_INIT_16(BT_UUID_GATT_CPF_VAL);
 static struct bt_uuid_16 CCC_UUID = BT_UUID_INIT_16(BT_UUID_GATT_CCC_VAL);
 
-static ssize_t read_vnd(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+static ssize_t read_value(struct bt_conn *conn, const struct bt_gatt_attr *attr,
       void *buf, uint16_t len, uint16_t offset)
 {
   struct user_data *user_data = attr->user_data;
@@ -47,13 +45,40 @@ static ssize_t read_vnd(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 #define MAX_ATTRIBUTES 512
 
 const struct bt_uuid_128 METER_ACTIVE_ENERGY_IN_UUID = BT_UUID_INIT_128(
-    BT_UUID_128_ENCODE(0x12345678, 0x1234, 0x5678, 0x1234, 0x56789abcdef1));
+    BT_UUID_128_ENCODE(0xda415e1d, 0xa955, 0x45fc, 0xa9ef, 0xc2c02f95af5c));
 const struct bt_uuid_128 METER_ACTIVE_ENERGY_OUT_UUID = BT_UUID_INIT_128(
-    BT_UUID_128_ENCODE(0x12345678, 0x1234, 0x5678, 0x1234, 0x56789abcdef2));
+    BT_UUID_128_ENCODE(0xe93595bf, 0xa138, 0x4827, 0xbae4, 0x8b556bbd8a6d));
+const struct bt_uuid_128 METER_REACTIVE_ENERGY_IN_UUID = BT_UUID_INIT_128(
+	BT_UUID_128_ENCODE(0x0594194e, 0xa360, 0x451d, 0xbb8e, 0xbbbfe1fd9d27));
+const struct bt_uuid_128 METER_REACTIVE_ENERGY_OUT_UUID = BT_UUID_INIT_128(
+	BT_UUID_128_ENCODE(0x86a6f8ec, 0x9529, 0x4ef9, 0x8327, 0x5f32eb98e5b7));
+
+
 const struct bt_uuid_128 ACTIVE_ENERGY_IN_UUID = BT_UUID_INIT_128(
-    BT_UUID_128_ENCODE(0x12345678, 0x1234, 0x5678, 0x1234, 0x56789abcdef3));
+    BT_UUID_128_ENCODE(0xe587eea0, 0xc607, 0x41f9, 0x9a6e, 0x8a748dff8f53));
 const struct bt_uuid_128 ACTIVE_ENERGY_OUT_UUID = BT_UUID_INIT_128(
-    BT_UUID_128_ENCODE(0x12345678, 0x1234, 0x5678, 0x1234, 0x56789abcdef4));
+    BT_UUID_128_ENCODE(0x48740983, 0xed21, 0x49fa, 0xa95d, 0xe263d989a031));
+const struct bt_uuid_128 REACTIVE_ENERGY_IN_UUID = BT_UUID_INIT_128(
+    BT_UUID_128_ENCODE(0x58dcf32d, 0x4a41, 0x4b09, 0xb821, 0x333005971c6b));
+const struct bt_uuid_128 REACTIVE_ENERGY_OUT_UUID = BT_UUID_INIT_128(
+    BT_UUID_128_ENCODE(0xc6acfc29, 0xa4a0, 0x4241, 0x98aa, 0xec52b37ea1c5));
+
+/*
+92852415-0682-4246-93fb-7d0b27d87e13
+450144e3-40a5-41ba-94d8-44963d21cea7
+0a7dae17-a85f-49a4-9340-d31021e9ec50
+
+f79c914c-4d37-4913-ab85-cda5c87aeb6e
+e7fc354e-c420-4c07-99c7-f946215672e9
+6c038bf7-fec5-4f1f-b508-f6c902469597
+
+4c29b9f1-39e3-4d3b-a8cf-bbf2174ac6ec
+2f9324e3-28f2-4a20-9884-784d6168d69d
+6fa7f29f-a6bc-462f-9640-65b27e5a9dda
+
+13b2f440-0fe0-4770-b7e4-956ed0637531
+769b7853-e490-48e8-895c-1411746cefcc
+*/
 
 #define CPF_UNIT_ENERGY_KWH 0x27AB
 #define CPF_UNIT_POWER_W 0x2726
@@ -131,7 +156,7 @@ int ble_service_add_item_attributes(struct ble_service * service) {
 		const struct gatt_ch *ch = &gatt_ch_table[item];
 		struct bt_gatt_attr attributes[] = {
 			BT_GATT_ATTRIBUTE(&CHRC_UUID.uuid, BT_GATT_PERM_READ, bt_gatt_attr_read_chrc, NULL, &service->chrc[item]),
-			BT_GATT_ATTRIBUTE(&ch->uuid->uuid, BT_GATT_PERM_READ, read_vnd, NULL, &service->user_data[item]),
+			BT_GATT_ATTRIBUTE(&ch->uuid->uuid, BT_GATT_PERM_READ, read_value, NULL, &service->user_data[item]),
 			BT_GATT_ATTRIBUTE(&CUD_UUID.uuid, BT_GATT_PERM_READ, bt_gatt_attr_read_cud, NULL, ch->description),
 			BT_GATT_ATTRIBUTE(&CPF_UUID.uuid, BT_GATT_PERM_READ, bt_gatt_attr_read_cpf, NULL, ch->cpf), 
 			BT_GATT_ATTRIBUTE(&CCC_UUID.uuid, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE, 
