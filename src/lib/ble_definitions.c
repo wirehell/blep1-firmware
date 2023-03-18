@@ -13,6 +13,12 @@ struct bt_uuid_128 blep1_uuid = BT_UUID_INIT_128(BT_UUID_BLEP1_SERVICE_VAL);
 
 #define MAX_ATTRIBUTES 512
 
+
+// We could use 0x2a08 characteristic, but this field is not very useful, 
+// so for now, let's just pass it as a fixed length string.
+const struct bt_uuid_128 DATE_TIME_UUID = BT_UUID_INIT_128(
+	BT_UUID_128_ENCODE(0x769b7853, 0xe490, 0x48e8, 0x895c, 0x1411746cefcc));
+
 const struct bt_uuid_128 METER_ACTIVE_ENERGY_IN_UUID = BT_UUID_INIT_128(
     BT_UUID_128_ENCODE(0xda415e1d, 0xa955, 0x45fc, 0xa9ef, 0xc2c02f95af5c));
 const struct bt_uuid_128 METER_ACTIVE_ENERGY_OUT_UUID = BT_UUID_INIT_128(
@@ -45,8 +51,6 @@ e7fc354e-c420-4c07-99c7-f946215672e9
 2f9324e3-28f2-4a20-9884-784d6168d69d
 6fa7f29f-a6bc-462f-9640-65b27e5a9dda
 
-13b2f440-0fe0-4770-b7e4-956ed0637531
-769b7853-e490-48e8-895c-1411746cefcc
 */
 
 #define CPF_UNIT_ENERGY_KWH 0x27AB
@@ -54,6 +58,12 @@ e7fc354e-c420-4c07-99c7-f946215672e9
 
 #define CPF_FORMAT_UINT8 0x04
 #define CPF_FORMAT_UINT32 0x08
+
+#define CPF_FORMAT_UTF8 0x19
+
+const struct bt_gatt_cpf CPF_STRING = {
+  .format = CPF_FORMAT_UTF8,
+};
 
 const struct bt_gatt_cpf CPF_UINT32_KWH_FROM_8_3_KWH = {
   .format = CPF_FORMAT_UINT32,
@@ -80,6 +90,7 @@ const struct bt_gatt_cpf CPF_UINT32_VA_FROM_4_3_KVAR = {
 };
 
 const struct gatt_ch gatt_ch_table[] = {
+	{ DATE_TIME,					&DATE_TIME_UUID,					&CPF_STRING,						"Date and time"},
     { METER_ACTIVE_ENERGY_IN,   	&METER_ACTIVE_ENERGY_IN_UUID,   	&CPF_UINT32_KWH_FROM_8_3_KWH, 		"Meter - Active energy in"},
     { METER_ACTIVE_ENERGY_OUT,  	&METER_ACTIVE_ENERGY_OUT_UUID,  	&CPF_UINT32_KWH_FROM_8_3_KWH, 		"Meter - Active energy out"},
     { METER_REACTIVE_ENERGY_IN,   	&METER_REACTIVE_ENERGY_IN_UUID,   	&CPF_UINT32_KVARH_FROM_8_3_KVARH, 	"Meter - Reactive energy in"},

@@ -10,6 +10,7 @@ struct parser {
     regex_t header_regex;
     regex_t footer_regex;
     regex_t data_line_regex;
+    regex_t date_time_regex;
     regex_t double_long_unsigned_8_3_regex;
     regex_t double_long_unsigned_4_3_regex;
     regex_t long_unsigned_3_1_regex;

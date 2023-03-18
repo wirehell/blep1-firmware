@@ -13,6 +13,12 @@ uint16_t data_item_size(struct data_item *data_item) {
             return sizeof(data_item->value.double_long_unsigned);
         case DOUBLE_LONG_UNSIGNED_4_3:
             return sizeof(data_item->value.double_long_unsigned);
+        case DATE_TIME_STRING:
+            return sizeof(data_item->value.date_time)/sizeof(uint8_t);
+        case LONG_SIGNED_3_1:
+            return sizeof(data_item->value.long_signed);
+        case LONG_UNSIGNED_3_1:
+            return sizeof(data_item->value.long_unsigned);
     
     default:
         LOG_ERR("Size of type not known: %d", data_item->item);

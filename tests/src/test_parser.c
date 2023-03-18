@@ -29,6 +29,16 @@ ZTEST(parser_suite, test_data_line_unknown_obis) {
 	parser_free(parser);
 }
 
+ZTEST(parser_suite, test_data_line_0_0_1) {
+	struct parser *parser = parser_init();
+	char str[] = "0-0:1.0.0(220318212801W)";
+	struct data_item data_item;
+	zassert_ok(parse_data_line(parser, &data_item, str));
+	zassert_equal(data_item.item, DATE_TIME);
+	zassert_equal(strcmp(data_item.value.date_time, "220318212801W"), 0);
+	parser_free(parser);
+}
+
 ZTEST(parser_suite, test_data_line_1_7_0) {
 	struct parser *parser = parser_init();
 	char str[] = "1-0:1.7.0(0002.123*kW)";
@@ -140,7 +150,7 @@ ZTEST(parser_suite, test_landgyr_e360) {
 
 	struct telegram *telegram = parse_telegram(parser, buf);
 	zassert_not_null(telegram);
-	zassert_equal(telegram_items_count(telegram), 8);
+	zassert_equal(telegram_items_count(telegram), 9);
 
 	net_buf_unref(buf);
 	parser_free(parser);

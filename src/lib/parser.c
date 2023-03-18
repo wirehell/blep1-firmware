@@ -19,6 +19,7 @@ LOG_MODULE_REGISTER(parser, LOG_LEVEL_DBG);
 #define DATA_LINE_REGEX_PATTERN "^([^\\(]+)\\(([^\\*]+)(\\*.*)?\\)$"
 #define DATA_REGEX_DOUBLE_LONG_UNSIGNED_8_3 "^([0-9]{8})\\.([0-9]{3})$"
 #define DATA_REGEX_DOUBLE_LONG_UNSIGNED_4_3 "^([0-9]{4})\\.([0-9]{3})$"
+#define DATA_REGEX_DATE_TIME_STRING "^([0-9]{12}W|S)$"
 
 #define UNIT_REGEX_K_WATT_HOUR "^(kwh)|(kWh)$"
 #define UNIT_REGEX_K_WATT "^(kw)|(kW)$"
@@ -31,6 +32,7 @@ LOG_MODULE_REGISTER(parser, LOG_LEVEL_DBG);
 void parser_free(struct parser *parser) {
     regfree(&parser->header_regex);
     regfree(&parser->data_line_regex);
+    regfree(&parser->date_time_regex);
     regfree(&parser->double_long_unsigned_8_3_regex);
     regfree(&parser->double_long_unsigned_4_3_regex);
     regfree(&parser->unit_kwh_regex);
@@ -60,6 +62,11 @@ struct parser * parser_init() {
     reti = regcomp(&parser->data_line_regex, DATA_LINE_REGEX_PATTERN, REG_EXTENDED);
     if (reti) {
         LOG_ERR("Could not compile header regex");
+        return NULL;
+    }
+    reti = regcomp(&parser->date_time_regex, DATA_REGEX_DATE_TIME_STRING, REG_EXTENDED);
+    if (reti) {
+        LOG_ERR("Could not compile regex for date_time");
         return NULL;
     }
     reti = regcomp(&parser->double_long_unsigned_8_3_regex, DATA_REGEX_DOUBLE_LONG_UNSIGNED_8_3, REG_EXTENDED);
@@ -170,6 +177,25 @@ static uint32_t parse_double_long_unsigned(struct parser *parser, regex_t *re, c
 
 }
 
+static void parse_date_time_into(struct parser *parser, char *data, struct data_item *data_item) {
+    int err;
+    char *start, *end;
+    regmatch_t pmatch[3];
+
+    err = regexec(&parser->date_time_regex, data, 3, pmatch, 0);
+    if (err != 0) {
+	    LOG_ERR("Failed to parse date_time string: %s", data);
+        errno = EINVAL;
+	    return;
+    }
+
+    start = data;
+    end = &data[pmatch[1].rm_eo];
+    memcpy(data_item->value.date_time, start, 13);
+    data_item->value.date_time[13] = '\0';
+
+}
+
 static uint32_t parse_double_long_unsigned_8_3(struct parser *parser, char *data) {
     return parse_double_long_unsigned(parser, &parser->double_long_unsigned_8_3_regex, data);
 }
@@ -181,6 +207,10 @@ static uint32_t parse_double_long_unsigned_4_3(struct parser *parser, char *data
 int parse_value_into(struct parser *parser, struct data_item *data_item, char *data, enum Format format) {
     errno = 0;
     switch(format) {
+        case DATE_TIME_STRING:
+            parse_date_time_into(parser, data, data_item);
+            LOG_DBG("Parsed datetime: %s", data_item->value.date_time);
+            break;
         case DOUBLE_LONG_UNSIGNED_8_3: 
             data_item->value.double_long_unsigned = parse_double_long_unsigned_8_3(parser, data);
             LOG_DBG("Parsed double-long-unsigned-8-3: %u", data_item->value.double_long_unsigned);
@@ -217,14 +247,19 @@ regex_t * parser_regex_for_unit(struct parser *parser, enum Unit unit) {
 }
 
 int check_unit(struct parser *parser, char *unit, enum Unit expected_unit) {
-    if (unit == NULL && expected_unit != NONE) {
+    if (expected_unit == NONE) {
+        if (unit != NULL) {
+            LOG_ERR("Did not expect unit, but recived one (%s)", unit);
+            return -1;
+        }
+        return 0;
+    }
+
+    if (unit == NULL) {
         LOG_ERR("Expected a unit (%d), but recived none", unit);
         return -1;
     }
-    if (unit != NULL && expected_unit == NONE) {
-        LOG_ERR("Did not expect unit, but recived one (%s)", unit);
-        return -1;
-    }
+
     regex_t *unit_regex = parser_regex_for_unit(parser, expected_unit);
     if (unit_regex == NULL) {
         return -1;

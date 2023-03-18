@@ -7,6 +7,7 @@
 
 extern struct bt_uuid_128 blep1_uuid;
 
+extern const struct bt_uuid_128 DATE_TIME_UUID;
 extern const struct bt_uuid_128 METER_ACTIVE_ENERGY_IN_UUID;
 extern const struct bt_uuid_128 METER_ACTIVE_ENERGY_OUT_UUID;
 extern const struct bt_uuid_128 ACTIVE_ENERGY_IN_UUID;

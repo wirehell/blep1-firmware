@@ -5,7 +5,7 @@
 #include <zephyr/bluetooth/uuid.h>
 
 enum Format {
-    DATE_TIME,
+    DATE_TIME_STRING,
     DOUBLE_LONG_UNSIGNED_8_3,
     DOUBLE_LONG_UNSIGNED_4_3,
     LONG_UNSIGNED_3_1,
@@ -13,6 +13,7 @@ enum Format {
 };
 
 enum Item {
+    DATE_TIME,
     METER_ACTIVE_ENERGY_IN,
     METER_ACTIVE_ENERGY_OUT,
     METER_REACTIVE_ENERGY_IN,

@@ -8,6 +8,8 @@
 union data_value {
         uint32_t double_long_unsigned;
         uint16_t long_unsigned;
+        int16_t long_signed;
+        uint8_t date_time[14];
 };
 
 struct data_item {
