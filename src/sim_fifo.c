@@ -24,8 +24,8 @@ void sim_update(int t) {
     pos += sprintf(&buf[pos], "0-0:1.0.0(230313204113W)\r\n"); // TODO 
     pos += sprintf(&buf[pos], "1-0:1.8.0(%012.3f*kWh)\r\n", 0.394 * t);
     pos += sprintf(&buf[pos], "1-0:2.8.0(%012.3f*kWh)\r\n", 0.128 * t);
-    pos += sprintf(&buf[pos], "1-0:3.8.0(%012.3f*kWh)\r\n", 0.074 * t);
-    pos += sprintf(&buf[pos], "1-0:4.8.0(%012.3f*kWh)\r\n", 0.018 * t);
+    pos += sprintf(&buf[pos], "1-0:3.8.0(%012.3f*kvarh)\r\n", 0.074 * t);
+    pos += sprintf(&buf[pos], "1-0:4.8.0(%012.3f*kvarh)\r\n", 0.018 * t);
     pos += sprintf(&buf[pos], "1-0:1.7.0(%08.3f*kW)\r\n",  5 + 5 * sin(M_PI * t / 10.0));
     pos += sprintf(&buf[pos], "1-0:2.7.0(%08.3f*kW)\r\n",  3 + 3 * cos(M_PI * t / 10.0));
     pos += sprintf(&buf[pos], "1-0:3.7.0(%08.3f*kvar)\r\n", 0.5 + 0.5 * sin(M_PI * t / 7.0));
