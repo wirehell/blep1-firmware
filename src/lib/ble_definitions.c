@@ -61,42 +61,42 @@ e7fc354e-c420-4c07-99c7-f946215672e9
 
 #define CPF_FORMAT_UTF8 0x19
 
-const struct bt_gatt_cpf CPF_STRING = {
+struct bt_gatt_cpf CPF_STRING = {
   .format = CPF_FORMAT_UTF8,
 };
 
-const struct bt_gatt_cpf CPF_UINT32_KWH_FROM_8_3_KWH = {
+struct bt_gatt_cpf CPF_UINT32_KWH_FROM_8_3_KWH = {
   .format = CPF_FORMAT_UINT32,
   .exponent = -3,
   .unit = CPF_UNIT_ENERGY_KWH,
 };
 
-const struct bt_gatt_cpf CPF_UINT32_KVARH_FROM_8_3_KVARH = {
+struct bt_gatt_cpf CPF_UINT32_KVARH_FROM_8_3_KVARH = {
   .format = CPF_FORMAT_UINT32,
   .exponent = -3,
   // No suitable unit exists
 };
 
-const struct bt_gatt_cpf CPF_UINT32_W_FROM_4_3_KW = {
+struct bt_gatt_cpf CPF_UINT32_W_FROM_4_3_KW = {
   .format = CPF_FORMAT_UINT32,
   .exponent = 0,
   .unit = CPF_UNIT_POWER_W,
 };
 
-const struct bt_gatt_cpf CPF_UINT32_VA_FROM_4_3_KVAR = {
+struct bt_gatt_cpf CPF_UINT32_VA_FROM_4_3_KVAR = {
   .format = CPF_FORMAT_UINT32,
   .exponent = 0,
   // No suitable unit exists
 };
 
 const struct gatt_ch gatt_ch_table[] = {
-	{ DATE_TIME,					&DATE_TIME_UUID,					&CPF_STRING,						"Date and time"},
+	  { DATE_TIME,					        &DATE_TIME_UUID,					        &CPF_STRING,						          "Date and time"},
     { METER_ACTIVE_ENERGY_IN,   	&METER_ACTIVE_ENERGY_IN_UUID,   	&CPF_UINT32_KWH_FROM_8_3_KWH, 		"Meter - Active energy in"},
     { METER_ACTIVE_ENERGY_OUT,  	&METER_ACTIVE_ENERGY_OUT_UUID,  	&CPF_UINT32_KWH_FROM_8_3_KWH, 		"Meter - Active energy out"},
-    { METER_REACTIVE_ENERGY_IN,   	&METER_REACTIVE_ENERGY_IN_UUID,   	&CPF_UINT32_KVARH_FROM_8_3_KVARH, 	"Meter - Reactive energy in"},
-    { METER_REACTIVE_ENERGY_OUT,  	&METER_REACTIVE_ENERGY_OUT_UUID,  	&CPF_UINT32_KVARH_FROM_8_3_KVARH, 	"Meter - Reactive energy out"},
+    { METER_REACTIVE_ENERGY_IN,   &METER_REACTIVE_ENERGY_IN_UUID,   &CPF_UINT32_KVARH_FROM_8_3_KVARH, "Meter - Reactive energy in"},
+    { METER_REACTIVE_ENERGY_OUT,  &METER_REACTIVE_ENERGY_OUT_UUID,  &CPF_UINT32_KVARH_FROM_8_3_KVARH, "Meter - Reactive energy out"},
     { ACTIVE_ENERGY_IN,         	&ACTIVE_ENERGY_IN_UUID,         	&CPF_UINT32_W_FROM_4_3_KW,    		"Active energy in"},
     { ACTIVE_ENERGY_OUT,        	&ACTIVE_ENERGY_OUT_UUID,        	&CPF_UINT32_W_FROM_4_3_KW,    		"Active energy out"},
-    { REACTIVE_ENERGY_IN,         	&REACTIVE_ENERGY_IN_UUID,         	&CPF_UINT32_VA_FROM_4_3_KVAR,    	"Reactive energy in"},
-    { REACTIVE_ENERGY_OUT,        	&REACTIVE_ENERGY_OUT_UUID,        	&CPF_UINT32_VA_FROM_4_3_KVAR,    	"Reactive energy out"},
+    { REACTIVE_ENERGY_IN,         &REACTIVE_ENERGY_IN_UUID,         &CPF_UINT32_VA_FROM_4_3_KVAR,    	"Reactive energy in"},
+    { REACTIVE_ENERGY_OUT,        &REACTIVE_ENERGY_OUT_UUID,        &CPF_UINT32_VA_FROM_4_3_KVAR,    	"Reactive energy out"},
 };

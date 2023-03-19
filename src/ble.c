@@ -103,11 +103,10 @@ int ble_service_add_item_attributes(struct ble_service * service) {
 		// Add a self reference for notficationas
 		// Assumes the value attribute is third from bottom in list above
 		struct bt_gatt_attr *value_attr = &service->gatt_service.attrs[service->gatt_service.attr_count - 4];
-		service->user_data[item] = (struct user_data) {
-			.item = ch->item,
-			.last_updated = 0,
-			.value = 0,
-			.attr = value_attr,
+		service->user_data[item] = (struct user_data) { 
+			.item = ch->item, 
+			.last_updated = 0, 
+			.attr = value_attr, 
 		};
 	}
 	return 0;

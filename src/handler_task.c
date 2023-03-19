@@ -50,7 +50,7 @@ void handler_task(void *, void *, void *) {
             LOG_ERR("Failed to receive message for some reason: %d", ret);
         } else {
             struct telegram *telegram = telegram_message.telegram;
-            LOG_INF("Handler task received telegram, %x", telegram);
+            LOG_INF("Handler task received telegram");
             handle_telegram(telegram);
             telegram_free(telegram);
         }

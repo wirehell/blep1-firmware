@@ -40,6 +40,8 @@ static bool initialized;
 static struct k_pipe *output_pipe;
 static struct k_pipe *tx_pipe;
 
+static const int read_buf_size = BUF_SIZE;
+
 void receive_cb(const struct device *dev, void *user_data) {
 	uint8_t buf[BUF_SIZE];
     int bytes_read;
@@ -55,10 +57,10 @@ void receive_cb(const struct device *dev, void *user_data) {
 	/* read until FIFO empty */
     do {
         int bytes_written;
-	    bytes_read = uart_fifo_read(uart_dev, &buf, BUF_SIZE);
+	    bytes_read = uart_fifo_read(uart_dev, buf, read_buf_size);
         int ret = k_pipe_put(output_pipe, buf, bytes_read, &bytes_written, bytes_read, K_NO_WAIT);
         if (ret < 0) {
-            LOG_WRN("Buffer overrun, %d bytes", bytes_read);
+            LOG_WRN("Buffer overrun, %d bytes", bytes_read - bytes_written);
         }
     } while (bytes_read > 0);
 }
@@ -87,8 +89,6 @@ int uart_p1_init(struct k_pipe *output, struct k_pipe *tx) {
     return 0;
 }
 
-
-
 #if CONFIG_BLEP1_SIM_UART_OUT
 
 #define STACKSIZE 1024
@@ -100,12 +100,11 @@ uint8_t TX_BUF[TX_BUF_SIZE];
 
 void test_tx(void *, void *, void *) {
     while (!initialized) {
-        // TODO just use a semaphore instead
-        k_sleep(K_MSEC(3000));
+        k_sleep(K_MSEC(100));
     }
     while (true) {
         size_t bytes_read;
-        int ret = k_pipe_get(&tx_pipe, TX_BUF, TX_BUF_SIZE, &bytes_read, 1, K_MSEC(100));
+        int ret = k_pipe_get(tx_pipe, TX_BUF, TX_BUF_SIZE, &bytes_read, 1, K_MSEC(100));
         if (ret == -EAGAIN) {
             continue;
         } else if (ret < 0) {

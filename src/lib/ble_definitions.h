@@ -16,7 +16,7 @@ extern const struct bt_uuid_128 ACTIVE_ENERGY_OUT_UUID;
 struct gatt_ch {
     enum Item item;
     const struct bt_uuid_128 *uuid;
-    const struct bt_gatt_cpf *cpf;
+    struct bt_gatt_cpf *cpf;
     char *description;
 };
 

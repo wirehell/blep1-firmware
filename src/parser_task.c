@@ -40,7 +40,7 @@ void parser_task(void *, void *, void *) {
         LOG_INF("Received telegram buffer, length %d", telegram_buf->len);
         struct telegram *telegram = parse_telegram(parser, telegram_buf);
         if (telegram != NULL) {
-            LOG_INF("Received telegram with length: %d, %x", telegram_items_count(telegram), telegram);
+            LOG_INF("Received telegram with length: %d", telegram_items_count(telegram));
             telegram_message message = { telegram };
 
             // Remove any existing message as they are outdated
