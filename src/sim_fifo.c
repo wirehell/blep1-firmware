@@ -22,6 +22,8 @@ extern struct k_pipe tx_pipe;
 
 LOG_MODULE_REGISTER(sim_fifo, LOG_LEVEL_DBG);
 
+#define PI 3.14159
+
 uint8_t buf[8192];
 
 struct tm tm;
@@ -41,16 +43,16 @@ void sim_update(int t) {
     pos += sprintf(&buf[pos], "1-0:2.8.0(%012.3f*kWh)\r\n", 0.128 * t);
     pos += sprintf(&buf[pos], "1-0:3.8.0(%012.3f*kvarh)\r\n", 0.074 * t);
     pos += sprintf(&buf[pos], "1-0:4.8.0(%012.3f*kvarh)\r\n", 0.018 * t);
-    pos += sprintf(&buf[pos], "1-0:1.7.0(%08.3f*kW)\r\n",  5 + 5 * sin(M_PI * t / 10.0));
-    pos += sprintf(&buf[pos], "1-0:2.7.0(%08.3f*kW)\r\n",  3 + 3 * cos(M_PI * t / 10.0));
-    pos += sprintf(&buf[pos], "1-0:3.7.0(%08.3f*kvar)\r\n", 0.5 + 0.5 * sin(M_PI * t / 7.0));
-    pos += sprintf(&buf[pos], "1-0:4.7.0(%08.3f*kvar)\r\n", 0.2 + 0.2 * cos(M_PI * t / 7.0));
-    pos += sprintf(&buf[pos], "1-0:32.7.0(%05.1f*V)\r\n", 240 + sin(M_PI * t / 10) * 5);
-    pos += sprintf(&buf[pos], "1-0:52.7.0(%05.1f*V)\r\n", 240 + sin(M_PI * t / 9) * 5);
-    pos += sprintf(&buf[pos], "1-0:72.7.0(%05.1f*V)\r\n", 240 + sin(M_PI * t / 8) * 5);
-    pos += sprintf(&buf[pos], "1-0:31.7.0(%05.1f*A)\r\n", 5 + sin(M_PI * t / 10) * 5);
-    pos += sprintf(&buf[pos], "1-0:51.7.0(%05.1f*A)\r\n", 5 + sin(M_PI * t / 9) * 5);
-    pos += sprintf(&buf[pos], "1-0:71.7.0(%05.1f*A)\r\n", 5 + sin(M_PI * t / 8) * 5);
+    pos += sprintf(&buf[pos], "1-0:1.7.0(%08.3f*kW)\r\n",  5 + 5 * sin(PI * t / 10.0));
+    pos += sprintf(&buf[pos], "1-0:2.7.0(%08.3f*kW)\r\n",  3 + 3 * cos(PI * t / 10.0));
+    pos += sprintf(&buf[pos], "1-0:3.7.0(%08.3f*kvar)\r\n", 0.5 + 0.5 * sin(PI * t / 7.0));
+    pos += sprintf(&buf[pos], "1-0:4.7.0(%08.3f*kvar)\r\n", 0.2 + 0.2 * cos(PI * t / 7.0));
+    pos += sprintf(&buf[pos], "1-0:32.7.0(%05.1f*V)\r\n", 240 + sin(PI * t / 10) * 5);
+    pos += sprintf(&buf[pos], "1-0:52.7.0(%05.1f*V)\r\n", 240 + sin(PI * t / 9) * 5);
+    pos += sprintf(&buf[pos], "1-0:72.7.0(%05.1f*V)\r\n", 240 + sin(PI * t / 8) * 5);
+    pos += sprintf(&buf[pos], "1-0:31.7.0(%05.1f*A)\r\n", 5 + sin(PI * t / 10) * 5);
+    pos += sprintf(&buf[pos], "1-0:51.7.0(%05.1f*A)\r\n", 5 + sin(PI * t / 9) * 5);
+    pos += sprintf(&buf[pos], "1-0:71.7.0(%05.1f*A)\r\n", 5 + sin(PI * t / 8) * 5);
     pos += sprintf(&buf[pos], "!");
     uint16_t checksum = crc16_reflect(0xa001, 0, buf, pos);
     pos += sprintf(&buf[pos], "%4X\r\n", checksum);

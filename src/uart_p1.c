@@ -94,27 +94,27 @@ int uart_p1_init(struct k_pipe *output, struct k_pipe *tx) {
 #define STACKSIZE 1024
 #define PRIORITY 7
 
-// Test data
-const uint8_t *test_data[] = {
-    "/ASD5id123\r\n\r\n",
-    "1-0:1.8.0(00006678.394*kWh)\r\n",
-    "1-0:2.8.0(00000000.000*kWh)\r\n",
-    "1-0:2.9.0(00000000.000)\r\n",
-    "1-0:21.7.0(0001.023*kW)\r\n",
-    "!10bc\r\n"
-};
+#define TX_BUF_SIZE 256
+
+uint8_t TX_BUF[TX_BUF_SIZE];
 
 void test_tx(void *, void *, void *) {
-    while (true) {
+    while (!initialized) {
+        // TODO just use a semaphore instead
         k_sleep(K_MSEC(3000));
-        if (initialized) {
-            LOG_INF("Transmitting");
-            for (int i = 0 ; i < sizeof(test_data) / sizeof(*test_data) ; i++) {
-                const uint8_t *s = test_data[i];
-                for (int j = 0 ; j < strlen(s) ; j++) {
-                    uart_poll_out(uart_dev, s[j]);
-                }
-            }
+    }
+    while (true) {
+        size_t bytes_read;
+        int ret = k_pipe_get(&tx_pipe, TX_BUF, TX_BUF_SIZE, &bytes_read, 1, K_MSEC(100));
+        if (ret == -EAGAIN) {
+            continue;
+        } else if (ret < 0) {
+            LOG_ERR("Failed to read data from tx_pipe %d. Aborting transmissions.", ret);
+            return;
+        }
+        LOG_INF("Transmitting test data: %d", bytes_read);
+        for (int i = 0 ; i < bytes_read ; i++) {
+            uart_poll_out(uart_dev, TX_BUF[i]);
         }
     }
 }
