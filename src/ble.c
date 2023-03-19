@@ -172,12 +172,23 @@ int ble_service_init(struct ble_service *service) {
 void ble_service_shutdown(struct ble_service *service) {
 }
 
-static void connected(struct bt_conn *conn, uint8_t err)
-{
+static void connected(struct bt_conn *conn, uint8_t err) {
 	if (err) {
 		printk("Connection failed (err 0x%02x)\n", err);
-	} else {
-		printk("Connected. MTU size: %d\n", bt_gatt_get_mtu(conn));
+		return;
+	}
+
+	LOG_INF("Connected. MTU size: %d\n", bt_gatt_get_mtu(conn));
+	struct bt_conn_info info;
+
+  	struct bt_conn_le_tx_power tx_power;
+
+	err = bt_conn_le_get_tx_power_level(conn, &tx_power);
+  	if (err) {
+    	LOG_ERR("Failed to get connection tx power level (err %d)\n", err);
+  	} else {
+		LOG_INF("Connected, phy: %d, tx power: %d, max tx power: %d", 
+			tx_power.phy, tx_power.current_level, tx_power.max_level);
 	}
 }
 
