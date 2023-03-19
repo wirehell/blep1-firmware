@@ -27,7 +27,6 @@ static ssize_t read_value(struct bt_conn *conn, const struct bt_gatt_attr *attr,
   struct user_data *user_data = attr->user_data;
 
   struct data_item data_item = {user_data->item, user_data->value };
-  // change interface
   uint16_t size = data_item_size(&data_item);
 
 //  LOG_DBG("Reading item: %d %d", user_data->item, user_data->value);
@@ -58,11 +57,9 @@ int ble_service_update_item(struct ble_service *service, struct data_item *data_
 	struct user_data *data = &service->user_data[data_item->item];
 	data->value = data_item->value;
 	data->last_updated = 1;
-	// TODO possible race condition if value is updated before notification happens. Once notify returns it should no longer referene value.
 	ret = bt_gatt_notify(NULL, data->attr, &data->value, data_item_size(data_item));
 	if (ret < 0) {
 		// This is normal when not connected..
-		// LOG_DBG("Failed gatt_notify of item: %d, err: %d", data_item->item, ret);
 		return -1;
 	}
 	return 0;
@@ -148,8 +145,6 @@ int ble_service_init(struct ble_service *service) {
 		return -1;
 	}
 
-	// TODO add any other controls, statistics and logs
-
 	ble_service_init_chrc(service);
 	ble_service_init_ccc(service);
 
@@ -175,7 +170,6 @@ int ble_service_init(struct ble_service *service) {
 }
 
 void ble_service_shutdown(struct ble_service *service) {
-	// TODO
 }
 
 static void connected(struct bt_conn *conn, uint8_t err)
