@@ -2,11 +2,8 @@
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/net/buf.h>
-#include <zephyr/sys/crc.h>
 #include <zephyr/kernel.h>
-#include <stdlib.h>
 #include <sys/types.h>
-#include <regex.h>
 
 #include "uart_p1.h"
 

@@ -1,9 +1,6 @@
 #include <zephyr/kernel.h>
 
 #include <zephyr/logging/log.h>
-#include <zephyr/net/buf.h>
-#include <zephyr/sys/crc.h>
-#include <stdlib.h>
 #include <sys/types.h>
 
 #include "handler_task.h"

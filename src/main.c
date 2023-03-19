@@ -1,9 +1,5 @@
 #include <zephyr/kernel.h>
-#include <zephyr/types.h>
-#include <stddef.h>
-#include <string.h>
 #include <zephyr/logging/log.h>
-#include <math.h>
 
 #include "lib/blep1.h"
 #include "lib/parser.h"
@@ -70,20 +66,7 @@ void main(void) {
 
 	LOG_INF("Up and running..");
 
-	/* Implement notification. At the moment there is no suitable way
-	 * of starting delayed work so we do it here
-	 */
-	int t = 0;
-	while (1) {
+	while (true) {
 		k_sleep(K_SECONDS(1));
-		/*
-		struct data_item data = (struct data_item) {
-			.item = ACTIVE_ENERGY_IN,
-			.value = sin( (double) t * M_PI / 10.0) * 1000 + 1500,
-		};
-		LOG_DBG("Setting %d to %d", data.item, data.value);
-		ble_service_update_item(&ble_service, &data);
-		*/
-		t++;
 	}
 }

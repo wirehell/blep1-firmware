@@ -2,10 +2,6 @@
 
 #include <zephyr/logging/log.h>
 #include <zephyr/net/buf.h>
-#include <zephyr/sys/crc.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <regex.h>
 
 #include "lib/parser.h"
 #include "lib/blep1.h"

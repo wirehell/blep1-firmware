@@ -1,12 +1,7 @@
-#include <zephyr/drivers/uart.h>
-#include <zephyr/device.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/net/buf.h>
-#include <zephyr/sys/crc.h>
 #include <zephyr/kernel.h>
-#include <stdlib.h>
 #include <sys/types.h>
-#include <regex.h>
 
 #include "framer_task.h"
 #include "lib/blep1.h"
@@ -46,7 +41,7 @@ int framer_task_init(struct k_pipe *input, struct k_fifo *output) {
     return 0;
 }
 
-void framer_task(const struct device *dev, void *user_data) {
+void framer_task(void *user_data) {
 	uint8_t c;
     size_t bytes_read;
     k_sem_take(&start, K_FOREVER);

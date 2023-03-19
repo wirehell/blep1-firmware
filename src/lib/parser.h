@@ -1,7 +1,9 @@
 #ifndef PARSER_HEADER_H
 #define PARSER_HEADER_H
 
+// Note, regex.h must be included before anything else. See https://github.com/zephyrproject-rtos/zephyr/issues/55593
 #include <regex.h>
+
 #include <zephyr/net/buf.h>
 #include "blep1.h"
 #include "telegram.h"
