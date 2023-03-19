@@ -4,6 +4,7 @@
 #include <zephyr/sys/crc.h>
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 
 #if CONFIG_BLEP1_SIM_DATA_ENABLED
 
@@ -23,12 +24,19 @@ LOG_MODULE_REGISTER(sim_fifo, LOG_LEVEL_DBG);
 
 uint8_t buf[8192];
 
-//	.value = sin( (double) t * M_PI / 10.0) * 1000 + 1500,
+struct tm tm;
 
 void sim_update(int t) {
     int pos = 0;
+    time_t time = t;
+    if (localtime_r(&time, &tm) == NULL) {
+        LOG_ERR("Failed to generate time");
+        return;
+    }
+
     pos += sprintf(&buf[pos], "/ASD5id123\r\n\r\n");
-    pos += sprintf(&buf[pos], "0-0:1.0.0(230313204113W)\r\n"); // TODO 
+    pos += sprintf(&buf[pos], "0-0:1.0.0(%02d%02d%02d%02d%02d%02dW)\r\n", 
+        tm.tm_year % 100, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec); 
     pos += sprintf(&buf[pos], "1-0:1.8.0(%012.3f*kWh)\r\n", 0.394 * t);
     pos += sprintf(&buf[pos], "1-0:2.8.0(%012.3f*kWh)\r\n", 0.128 * t);
     pos += sprintf(&buf[pos], "1-0:3.8.0(%012.3f*kvarh)\r\n", 0.074 * t);
@@ -56,7 +64,7 @@ void sim_fifo(void *, void *, void *) {
         sim_update(t++);
         LOG_INF("Transmitting");
         int len = strlen(buf);
-        int ret = k_pipe_put(&rx_pipe, buf, len, &bytes_written, len, K_NO_WAIT);
+        int ret = k_pipe_put(SIM_OUTPUT, buf, len, &bytes_written, len, K_NO_WAIT);
         if (ret < 0) {
             LOG_ERR("Failed to send simulated data to fifo: %d", ret);
         }
@@ -66,6 +74,5 @@ void sim_fifo(void *, void *, void *) {
 K_THREAD_DEFINE(sim_fifo_thread, STACKSIZE,
                 sim_fifo, NULL, NULL, NULL,
                 PRIORITY, 0, 0);
-
     
 #endif
