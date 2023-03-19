@@ -17,8 +17,6 @@
 #define MAX_TELEGRAM_SIZE 8192
 #define TELEGRAM_BUF_POOL_SIZE 4
 
-#if CONFIG_BLEP1_FRAMER_TASK
-
 LOG_MODULE_REGISTER(framer_task, LOG_LEVEL_DBG);
 
 K_SEM_DEFINE(start, 0, 1);
@@ -80,5 +78,3 @@ void framer_task(const struct device *dev, void *user_data) {
 K_THREAD_DEFINE(framer_task_thread, STACKSIZE,
                 framer_task, NULL, NULL, NULL,
                 PRIORITY, 0, 0);
-
-#endif

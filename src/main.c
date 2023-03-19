@@ -16,6 +16,7 @@
 #include "ble.h"
 
 K_PIPE_DEFINE(rx_pipe, 8192, 4);
+K_PIPE_DEFINE(tx_pipe, 8192, 4);
 K_FIFO_DEFINE(telegram_frame_fifo);
 K_MSGQ_DEFINE(telegram_queue, sizeof(telegram_message), 1, 4); 
 
@@ -32,25 +33,21 @@ void main(void) {
 	LOG_INF("Starting..");
 
 #if CONFIG_BLEP1_SERIAL
-	err = uart_p1_init();
+	err = uart_p1_init(&rx_pipe, &tx_pipe);
 	if (err < 0) {
 		LOG_ERR("Could not init uart (err %d)", err);
 	}
 #endif
 
-#if CONFIG_BLEP1_FRAMER_TASK
 	err = framer_task_init(&rx_pipe, &telegram_frame_fifo);
 	if (err < 0) {
 		LOG_ERR("Could not init parser task (err %d)", err);
 	}
-#endif
 
-#if CONFIG_BLEP1_PARSER_TASK
 	err = parser_task_init(&telegram_frame_fifo, &telegram_queue);
 	if (err < 0) {
 		LOG_ERR("Could not init parser task (err %d)", err);
 	}
-#endif
 
 	err = bt_enable(NULL);
 	if (err < 0) {
@@ -64,12 +61,10 @@ void main(void) {
 		return;
 	}
 
-#if CONFIG_BLEP1_HANDLER_TASK
 	err = handler_task_init(&telegram_queue, &update_data_store);
 	if (err < 0) {
 		LOG_ERR("Could not init handler task (err %d)", err);
 	}
-#endif
 
 	bt_ready();
 

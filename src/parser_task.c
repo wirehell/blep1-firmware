@@ -10,8 +10,6 @@
 #include "lib/parser.h"
 #include "lib/blep1.h"
 
-#if CONFIG_BLEP1_PARSER_TASK
-
 LOG_MODULE_REGISTER(parser_task, LOG_LEVEL_DBG);
 
 #define STACKSIZE 1024
@@ -65,5 +63,3 @@ void parser_task(void *, void *, void *) {
 K_THREAD_DEFINE(parser_task_thread, STACKSIZE,
                 parser_task, NULL, NULL, NULL,
                 PRIORITY, 0, 0);
-
-#endif

@@ -10,14 +10,14 @@
 
 #include "uart_p1.h"
 
+#if CONFIG_BLEP1_SERIAL
+
 #define READ_TIMEOUT_MS 200
 #define MAX_TELEGRAM_SIZE 8192
 #define TELEGRAM_BUF_POOL_SIZE 4
 #define BUF_SIZE 256
 
 LOG_MODULE_REGISTER(uart_p1, LOG_LEVEL_DBG);
-
-#if CONFIG_BLEP1_SERIAL
 
 #define UART_DEVICE_NODE DT_NODELABEL(uart1)
 //DT_CHOSEN(p1)
@@ -37,8 +37,8 @@ static const struct uart_config uart_cfg = {
 
 static bool initialized;
 
-struct k_pipe *output_pipe;
-
+static struct k_pipe *output_pipe;
+static struct k_pipe *tx_pipe;
 
 void receive_cb(const struct device *dev, void *user_data) {
 	uint8_t buf[BUF_SIZE];
@@ -63,9 +63,10 @@ void receive_cb(const struct device *dev, void *user_data) {
     } while (bytes_read > 0);
 }
 
-int uart_p1_init(struct k_pipe *output) {
+int uart_p1_init(struct k_pipe *output, struct k_pipe *tx) {
     int ret;
     output_pipe = output;
+    tx_pipe = tx;
 
     LOG_INF("Uart init");
     if (!device_is_ready(uart_dev)) {
@@ -86,7 +87,9 @@ int uart_p1_init(struct k_pipe *output) {
     return 0;
 }
 
-// For test TX thread
+
+
+#if CONFIG_BLEP1_SIM_UART_OUT
 
 #define STACKSIZE 1024
 #define PRIORITY 7
@@ -120,5 +123,6 @@ K_THREAD_DEFINE(test_tx_thread, STACKSIZE,
                 test_tx, NULL, NULL, NULL,
                 PRIORITY, 0, 0);
 
+#endif
     
 #endif

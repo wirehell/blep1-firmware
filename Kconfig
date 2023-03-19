@@ -1,32 +1,37 @@
 mainmenu "Blep1 application"
 
+config BLEP1_SIM_DATA_ENABLED
+  bool "Create some simulated data"
+  default y
+
+choice BLEP1_DATA_SOURCE
+  bool "Choice of data source"
+  default BLEP1_UART_DATA_SOURCE
+
+config BLEP1_UART_DATA_SOURCE
+  bool "Read data from UART"
+  depends on BLEP1_SERIAL
+
+config BLEP1_SIM_DATA_SOURCE
+  bool "Read data directly from simulator"
+endchoice
+
 config BLEP1_SERIAL
-  bool "Receive data from uart"
-  default n
+  bool "Receive data from UART"
+  default y
 
-config BLEP1_SIM_UART
-  default n
+config BLEP1_SIM_UART_OUT
   bool "Send dummy data over tx line"
-
-config BLEP1_SIM_PIPE
-  default n
-  bool "Send dummy data directly to fifo"
-
-config BLEP1_SIM_TELEGRAM
-  default n
-  bool "Send dummy telegrams to telegram handler"
-
-config BLEP1_FRAMER_TASK
   default y
-  bool "Run framer task"
+  depends on BLEP1_UART_DATA_SOURCE
 
-config BLEP1_PARSER_TASK
+config BLEP_IGNORE_UNKNOWN
+  bool "Ignore unknown OBIS fields"
   default y
-  bool "Run parser task"
 
-config BLEP1_HANDLER_TASK
+config BLEP_IGNORE_PARSING_ERRORS
+  bool "Ignore fields with parsing errors"
   default y
-  bool "Run parser task"
 
 source "Kconfig.zephyr"
 

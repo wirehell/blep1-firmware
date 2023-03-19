@@ -11,8 +11,6 @@
 #include "lib/telegram.h"
 #include "lib/blep1.h"
 
-#if CONFIG_BLEP1_HANDLER_TASK
-
 LOG_MODULE_REGISTER(handler_task, LOG_LEVEL_DBG);
 
 #define STACKSIZE 1024
@@ -62,5 +60,3 @@ void handler_task(void *, void *, void *) {
 K_THREAD_DEFINE(handler_task_thread, STACKSIZE,
                 handler_task, NULL, NULL, NULL,
                 PRIORITY, 0, 0);
-
-#endif
