@@ -60,7 +60,6 @@ struct net_buf * telegram_framer_swap_buf(struct telegram_framer *framer) {
 bool telegram_framer_verify_checksum(struct telegram_framer *framer) {
     int pos = framer->pos;
     uint8_t *data = framer->buf->data;
-    //LOG_HEXDUMP_INF(&data[0], len, "test");
     if (pos < 7 || data[pos - 7] != '!') {
         LOG_ERR("Malformed telegram, should not happen");
         return false;
@@ -70,7 +69,7 @@ bool telegram_framer_verify_checksum(struct telegram_framer *framer) {
 
     unsigned long parsed = strtoul(checksum_start, &checksum_end, 16);
     if (parsed == ULONG_MAX) {
-        LOG_INF("Checksum parse error"); // TODO print hex values
+        LOG_HEXDUMP_INF(&data[pos - 7], 7, "Checksum parse error");
         return false;
     }
     uint16_t checksum_parsed = (uint16_t) parsed;
@@ -94,7 +93,7 @@ struct net_buf * telegram_framer_push(struct telegram_framer *framer, char c) {
 
     if (pos == 0 && c != '/') {
         // Discard intial non-start characters
-        //LOG_DBG("Discarding %X", c);
+        // Todo add metric
         return NULL;
     }
 
