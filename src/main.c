@@ -12,7 +12,6 @@
 
 #include "lib/value_store.h"
 #include "modbus_udp.h"
-//#include "ble.h"
 
 K_PIPE_DEFINE(rx_pipe, 4096, 4);
 K_PIPE_DEFINE(tx_pipe, 4096, 4);
@@ -21,13 +20,10 @@ K_MSGQ_DEFINE(telegram_queue, sizeof(telegram_message), 1, 4);
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
-//static struct ble_service ble_service;
-
 struct value_store value_store;
 
 void update_data_store(struct data_item *data_item) {
 	value_store_update(&value_store, data_item);
-//	ble_service_update_item(&ble_service, data_item);
 }
 
 void main(void) {
@@ -54,20 +50,6 @@ void main(void) {
 		return;
 	}
 
-/*
-	err = bt_enable(NULL);
-	if (err < 0) {
-		LOG_ERR("Bluetooth init failed (err %d)", err);
-		return;
-	}
-
-	err = ble_service_init(&ble_service);
-	if (err < 0) {
-		LOG_ERR("BLE service init failed (err %d)", err);
-		return;
-	}
-*/
-
 	err = handler_task_init(&telegram_queue, &update_data_store);
 	if (err < 0) {
 		LOG_ERR("Could not init handler task (err %d)", err);
@@ -79,7 +61,6 @@ void main(void) {
 		LOG_ERR("Could not initalize UDP Modbus server");
 		return;
 	}
-//	bt_ready();
 
 	LOG_INF("Up and running..");
 
