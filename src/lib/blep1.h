@@ -2,7 +2,6 @@
 #define BLEP1_HEADER_H
 
 #include <zephyr/types.h>
-#include <zephyr/bluetooth/uuid.h>
 
 enum Format {
     DATE_TIME_STRING,

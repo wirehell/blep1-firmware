@@ -14,6 +14,7 @@
 #include "lib/blep1.h"
 #include "lib/common.h"
 
+#if 0
 LOG_MODULE_REGISTER(ble, LOG_LEVEL_DBG);
 
 static struct bt_uuid_16 CHRC_UUID = BT_UUID_INIT_16(BT_UUID_GATT_CHRC_VAL);
@@ -229,6 +230,7 @@ void bt_ready(void)
 
 	err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);
 	
+	
 	if (err) {
 		printk("Advertising failed to start (err %d)\n", err);
 		return;
@@ -238,3 +240,4 @@ void bt_ready(void)
 
 	bt_conn_auth_cb_register(&auth_cb_display);
 }
+#endif

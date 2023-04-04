@@ -5,11 +5,14 @@
 
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_backend.h>
+#include <zephyr/logging/log_output.h>
 #include <zephyr/logging/log_backend_std.h>
 
 #include <sys/param.h>
 
 #include "nus_log.h"
+
+#if 0
 
 #define PIPE_BUFFER_SIZE 4096
 K_PIPE_DEFINE(log_pipe, PIPE_BUFFER_SIZE, 4);
@@ -159,3 +162,5 @@ K_THREAD_DEFINE(log_shipping_thread, STACKSIZE,
                 log_shipping, NULL, NULL, NULL,
                 PRIORITY, 0, 0);
 
+
+#endif
