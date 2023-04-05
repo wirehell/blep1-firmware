@@ -4,6 +4,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
 
+#if CONFIG_BLEP_UDP
+
 LOG_MODULE_REGISTER(udp, LOG_LEVEL_DBG);
 
 #define STACK_SIZE 2048
@@ -11,9 +13,7 @@ LOG_MODULE_REGISTER(udp, LOG_LEVEL_DBG);
 
 static struct request request;
 
-
 static struct udp_server server;
-
 
 static void receive_udp_task()
 {
@@ -93,3 +93,5 @@ int udp_server_init(struct message_handler *handler) {
   LOG_INF("UDP server initialized");
   return ret;
 }
+
+#endif

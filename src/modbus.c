@@ -1,13 +1,14 @@
 
-#include "modbus_udp.h"
+#include "modbus.h"
 #include "lib/value_store.h"
 #include "lib/blep1.h"
 #include "udp.h"
+#include "tcp.h"
 
 #include <stdint.h>
 #include <zephyr/modbus/modbus.h>
 
-LOG_MODULE_REGISTER(modbus_udp, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(modbus_server, LOG_LEVEL_DBG);
 
 K_SEM_DEFINE(response_ready, 0, 1);
  
@@ -118,21 +119,31 @@ const static struct modbus_iface_param server_param = {
 	.rawcb.user_data = NULL
 };
 
-static int send_udp_reply() {
+static int send_reply(int socket) {
 	uint8_t tx_buf[SEND_BUFFER_SIZE];
 	modbus_raw_put_header(&tx_adu, tx_buf);
 	// Size is checked earlier
 	memcpy(&tx_buf[MODBUS_MBAP_AND_FC_LENGTH], tx_adu.data, tx_adu.length);
 
+	#if CONFIG_BLEP_UDP
 	return udp_server_send(tx_buf, MODBUS_MBAP_AND_FC_LENGTH + tx_adu.length);
+	#elif CONFIG_BLEP_TCP
+	return tcp_server_send(socket, tx_buf, MODBUS_MBAP_AND_FC_LENGTH + tx_adu.length);
+	#else
+	LOG_ERR("Unknown transport");
+	return -1;
+	#endif
+
 }
 
+#if CONFIG_BLEP_UDP
 static int on_message_received(struct request *request) {
-    LOG_INF("Hello from hreandler, received: %d", request->len);
-
+#else
+static int on_message_received(struct tcp_request *request) {
+#endif
 	// Read header
 	if (request->len < MODBUS_MBAP_AND_FC_LENGTH) {
-		LOG_WRN("Modbus UDP: Received incomplete header");
+		LOG_WRN("Received incomplete header");
 		return -1;
 	}
 
@@ -140,7 +151,7 @@ static int on_message_received(struct request *request) {
 	LOG_HEXDUMP_DBG(request->recv_buffer, sizeof(MODBUS_MBAP_AND_FC_LENGTH), "h:>");
 
 	if (request->len < MODBUS_MBAP_AND_FC_LENGTH + rx_adu.length) {
-		LOG_WRN("Modbus UDP: Received incomplete ADU");
+		LOG_WRN("Received incomplete ADU");
 		return -1;
 	}
 
@@ -157,24 +168,44 @@ static int on_message_received(struct request *request) {
     // We trust our network to not DOS us with garbage
     // TODO: file a request for a dropped message callback
 	if (k_sem_take(&response_ready, K_MSEC(500)) != 0) {
-		LOG_ERR("MODBUS Udp: wait time for response expired");
+		LOG_ERR("Wait time for response expired");
 		modbus_raw_set_server_failure(&tx_adu);
 	}
 
-	return send_udp_reply();
+	#if CONFIG_BLEP_UDP
+	return send_reply(0);
+	#else
+	return send_reply(request->socket);
+	#endif
 }
 
+#if CONFIG_BLEP_UDP
 struct message_handler handler = {
 	.on_message_recived_cb = on_message_received,
 };
+#elif CONFIG_BLEP_TCP
+struct tcp_message_handler handler = {
+	.on_message_recived_cb = on_message_received,
+};
+#endif
 
-int modbus_udp_init(struct value_store *store) {
+
+int modbus_init(struct value_store *store) {
 
 	value_store = store;
 
+	#if CONFIG_BLEP_UDP
     if (udp_server_init(&handler) < 0) {
         return -1;
     }
+	#elif CONFIG_BLEP_TCP
+	if (tcp_server_init(&handler) < 0) {
+		return -1;
+	}
+	#else
+	LOG_ERR("Unknown transport");
+	return -1;
+	#endif
     
 	char iface_name[] = "RAW_0";
 	server_iface = modbus_iface_get_by_name(iface_name);

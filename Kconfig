@@ -33,5 +33,26 @@ config BLEP_IGNORE_PARSING_ERRORS
   bool "Ignore fields with parsing errors"
   default y
 
+choice BLEP_SOCKET_TYPE
+  bool "Socket type"
+  default BLEP_UDP
+
+config BLEP_TCP
+  bool "Use TCP socket"
+  depends on NET_TCP
+
+config BLEP_UDP
+  bool "Use UDP socket"
+  depends on NET_UDP
+endchoice
+
+config BLEP_HOSTNAME
+  string "Hostname"
+  default "blep-device"
+
+config BLEP_SRP_INSTANCE_NAME
+  string "SRP instance name"
+  default "BLEP1 device"
+
 source "Kconfig.zephyr"
 
