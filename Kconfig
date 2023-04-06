@@ -54,5 +54,9 @@ config BLEP_SRP_INSTANCE_NAME
   string "SRP instance name"
   default "BLEP1 device"
 
+config BLEP_LOG_TCP
+  bool "Use TCP server for sending logs"
+  default y
+
 source "Kconfig.zephyr"
 

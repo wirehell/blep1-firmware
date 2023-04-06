@@ -1,18 +1,17 @@
-#include <zephyr/kernel.h>
-#include <zephyr/logging/log.h>
-
 #include "lib/blep1.h"
 #include "lib/parser.h"
 #include "lib/telegram.h"
+#include "lib/value_store.h"
 
 #include "uart_p1.h"
 #include "framer_task.h"
 #include "parser_task.h"
 #include "handler_task.h"
-
-#include "lib/value_store.h"
 #include "modbus.h"
+#include "tcp_log.h"
 
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <zephyr/net/openthread.h>
 #include <openthread/srp_client.h>
 #include <openthread/instance.h>
@@ -122,6 +121,12 @@ void main(void) {
 	err = modbus_init(&value_store);
 	if (err < 0) {
 		LOG_ERR("Could not initalize Modbus server");
+		return;
+	}
+
+	err = tcp_log_server_start();
+	if (err < 0) {
+		LOG_ERR("Could not initalize tcp log server");
 		return;
 	}
 
