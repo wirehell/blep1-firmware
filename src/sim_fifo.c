@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(sim_fifo, LOG_LEVEL_DBG);
 
 #define PI 3.14159
 
-uint8_t buf[8192];
+uint8_t buf[4096];
 
 struct tm tm;
 

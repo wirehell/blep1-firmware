@@ -7,12 +7,10 @@
 #include <zephyr/logging/log_output.h>
 #include <zephyr/logging/log_backend_std.h>
 
-#include <sys/param.h>
-
 
 #if CONFIG_BLEP_LOG_TCP
 
-#define PIPE_BUFFER_SIZE 4096
+#define PIPE_BUFFER_SIZE 2048
 K_PIPE_DEFINE(log_pipe, PIPE_BUFFER_SIZE, 4);
 
 #define MAX_BUF_SIZE 256
@@ -66,11 +64,11 @@ static struct log_backend_api tcp_log_backend_api = {
 
 LOG_BACKEND_DEFINE(log_tcp_backend, tcp_log_backend_api, true);
 
-#define STACKSIZE 1024
+#define STACKSIZE 2048
 #define PRIORITY 8
 
 
-#define LOG_MTU 1280
+#define LOG_MTU 1024
 char SEND_BUF[LOG_MTU];
 
 int log_socket = -1;
@@ -82,12 +80,13 @@ static int log_shipping(int client) {
     size_t bytes_read;
     int ret = k_pipe_get(&log_pipe, SEND_BUF, size, &bytes_read, 0, K_MSEC(200));
     if (ret < 0) {
-      printk("Log shipping error: %d", ret);
+      printk("Log shipping error: %d\n", ret);
       continue;
     }
     if (bytes_read > 0) {
       ret = send(client, SEND_BUF, bytes_read, 0);
       if (ret < 0) {
+        printk("closing client: %d", ret);
         close(client);
         return 0;
       } 
@@ -107,8 +106,8 @@ static void tcp_connection_handler(void *ptr1, void *ptr2, void *ptr3) {
 	    printk("Accept error");
       continue;
     }
-    char buf[128];
-    if (net_addr_ntop(AF_INET6, &client_addr.sin6_addr, buf, 128) == NULL) {
+    char buf[256];
+    if (net_addr_ntop(AF_INET6, &client_addr.sin6_addr, buf, 256) == NULL) {
       printk("Couldn't put address in string");
       close(client);
       continue;
@@ -128,9 +127,10 @@ K_THREAD_DEFINE(log_shipping_thread, STACKSIZE,
                 PRIORITY, 0, -1);
 
 
+struct sockaddr_in6 addr;
+
 int tcp_log_server_start() {
   int ret;
-  struct sockaddr_in6 addr;
 
   (void)memset(&addr, 0, sizeof(addr));
   addr.sin6_family = AF_INET6;
@@ -160,7 +160,5 @@ int tcp_log_server_start() {
   printk("Log server initialized");
   return 0;
 }
-
-
 
 #endif

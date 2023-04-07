@@ -5,7 +5,7 @@
 
 #define ALIGNMENT 4
 
-K_HEAP_DEFINE(common_heap, 32768);
+K_HEAP_DEFINE(common_heap, 16384);
 
 void * common_heap_alloc(size_t bytes) {
     return k_heap_aligned_alloc(&common_heap, ALIGNMENT, bytes, K_NO_WAIT);
