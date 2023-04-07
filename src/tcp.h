@@ -8,7 +8,6 @@
 #define MODBUS_PORT 502
 #define RECV_BUFFER_SIZE 32
 #define SEND_BUFFER_SIZE 32
-#define MAX_CLIENT_QUEUE
 
 struct tcp_server {
   int sock;

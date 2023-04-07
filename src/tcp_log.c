@@ -154,6 +154,12 @@ int tcp_log_server_start() {
     ret = -errno;
   }
 
+  struct timeval timeout;
+  timeout.tv_sec = 15;
+  timeout.tv_usec = 0;
+
+  ret = setsockopt(log_socket, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+
   k_thread_name_set(log_shipping_thread, "TCP log thread");
   k_thread_start(log_shipping_thread);
 

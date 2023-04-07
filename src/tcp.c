@@ -5,6 +5,8 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/modbus/modbus.h>
 
+#include <sys/types.h>
+
 #if CONFIG_BLEP_TCP
 
 LOG_MODULE_REGISTER(tcp, LOG_LEVEL_DBG);
@@ -39,6 +41,18 @@ static void handle_tcp_connection(void *ptr1, void *ptr2, void *ptr3) {
   int client = tcp_sockets_in_use[slot];
   struct modbus_adu adu;
   uint8_t *buf = request[slot].recv_buffer;
+
+  struct timeval receive_timeout = {
+    .tv_sec = 120,
+    .tv_usec = 0,
+  };
+  ret = setsockopt(client, SOL_SOCKET, SO_SNDTIMEO, &receive_timeout, sizeof(receive_timeout));
+
+  struct timeval send_timeout = {
+    .tv_sec = 10,
+    .tv_usec = 0,
+  };
+  ret = setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, &send_timeout, sizeof(send_timeout));
 
   LOG_INF("Waiting for TCP packets on port on socket: %d", client);
 
