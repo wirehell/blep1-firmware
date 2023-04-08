@@ -6,11 +6,13 @@ jobs:
   checkout-and-prepare:
     runs-on: ubuntu-latest
     steps:
-#      - name: Create workspace
-#        run: mkdir workspace
+      - name: Create workspace
+        run: mkdir workspace
       - uses: actions/checkout@v3
         with:
-          path: workspace
+          path: workspace/openp1
+      - name: Change Owner of Container Working Directory
+        run: chown -R 1001:1001 $GITHUB_WORKSPACE/workspace
 
   container-test-job:
     needs: checkout-and-prepare
