@@ -3,14 +3,25 @@ on:
   push:
     branches: [ master ]
 jobs:
+  checkout-and-prepare:
+    runs-on: ubuntu-latest
+    steps:
+#      - name: Create workspace
+#        run: mkdir workspace
+      - uses: actions/checkout@v3
+        with:
+          path: workspace
+
   container-test-job:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/zephyrproject-rtos/zephyr-build:latest
       options: --cpus 1
+      volumes:
+        - workspace:/workdir
     steps:
       - name: West init 
-        run: west init .
+        run: west init
       - name: West update 
         run: west update
       - name: Build something
