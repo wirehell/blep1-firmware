@@ -3,29 +3,28 @@ on:
   push:
     branches: [ master ]
 jobs:
-  checkout-and-prepare:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create workspace
-        run: mkdir workspace
-      - uses: actions/checkout@v3
-        with:
-          path: workspace/openp1
-      - name: Change Owner of Container Working Directory
-        run: chown -R 1001:1001 $GITHUB_WORKSPACE/workspace
-
   container-test-job:
-    needs: checkout-and-prepare
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/zephyrproject-rtos/zephyr-build:latest
+      image: ghcr.io/zephyrproject-rtos/ci:v0.26.0
       options: --cpus 1
-      volumes:
-        - workspace:/workdir
     steps:
+      - name: Find cmake
+        run: find /root
+      - name: Cat cmake
+        run: cat /root/.cmake/packages/Zephyr-sdk/*
+      - uses: actions/checkout@v3
+        with:
+          path: zephyr_workspace/openp1
       - name: West init 
-        run: west init
+        run: west init -l openp1
+        working-directory: zephyr_workspace
       - name: West update 
         run: west update
+        working-directory: zephyr_workspace
       - name: Build something
-        run: west build -b nrf52840dongle_nrf52840
+        # Workaround issue with SDK not being found
+        env: 
+          ZEPHYR_SDK_INSTALL_DIR: /opt/toolchains/zephyr-sdk-0.16.0/
+        run: west build -b nrf52840dongle_nrf52840 openp1/firmware
+        working-directory: zephyr_workspace
