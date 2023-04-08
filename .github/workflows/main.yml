@@ -9,5 +9,5 @@ jobs:
       image: ghcr.io/zephyrproject-rtos/zephyr-build:latest
       options: --cpus 1
     steps:
-      - name: Test
-        run: ls
+      - name: Build something
+        run: west build -b nrf52840dongle_nrf52840
