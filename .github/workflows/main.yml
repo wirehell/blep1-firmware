@@ -22,6 +22,12 @@ jobs:
       - name: West update 
         run: west update
         working-directory: zephyr_workspace
+      - name: Run tests
+        # Workaround issue with SDK not being found
+        env: 
+          ZEPHYR_SDK_INSTALL_DIR: /opt/toolchains/zephyr-sdk-0.16.0/
+        run: west twister -T openp1/firmware/tests
+        working-directory: zephyr_workspace
       - name: Build something
         # Workaround issue with SDK not being found
         env: 

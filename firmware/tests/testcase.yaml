@@ -1,6 +1,6 @@
 tests:
   # section.subsection
-  sample.testing.ztest:
+  openp1.tests:
     build_only: false
     platform_allow: native_posix_64
     integration_platforms:

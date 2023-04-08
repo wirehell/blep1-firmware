@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(blep1_tests)
+project(openp1_tests)
 
 SET(CMAKE_C_FLAGS "-O0")
 SET(CMAKE_CPP_FLAGS "-O0")
