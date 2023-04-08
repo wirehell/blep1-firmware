@@ -5,7 +5,7 @@
 #include <regex.h>
 
 #include <zephyr/net/buf.h>
-#include "blep1.h"
+#include "openp1.h"
 #include "telegram.h"
 
 struct parser {

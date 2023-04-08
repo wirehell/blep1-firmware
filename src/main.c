@@ -1,4 +1,4 @@
-#include "lib/blep1.h"
+#include "lib/openp1.h"
 #include "lib/parser.h"
 #include "lib/telegram.h"
 #include "lib/value_store.h"
@@ -23,7 +23,7 @@ K_MSGQ_DEFINE(telegram_queue, sizeof(telegram_message), 1, 4);
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
-const char HOSTNAME[] = CONFIG_BLEP_HOSTNAME; 
+const char HOSTNAME[] = CONFIG_OPENP1_HOSTNAME; 
 
 struct value_store value_store;
 
@@ -39,10 +39,10 @@ void on_ot_srp_client_autostart_cb(const otSockAddr *aServerSockAddr, void *aCon
 	LOG_INF("SRP autostart callback. Server: %s", buf);
 }
 
-const char INSTANCE_NAME[] = CONFIG_BLEP_SRP_INSTANCE_NAME;
-#if CONFIG_BLEP_UDP
+const char INSTANCE_NAME[] = CONFIG_OPENP1_SRP_INSTANCE_NAME;
+#if CONFIG_OPENP1_UDP
 const char SERVICE_LABEL[] = "_blep1-modbus._udp";
-#elif CONFIG_BLEP_TCP
+#elif CONFIG_OPENP1_TCP
 const char SERVICE_LABEL[] = "_blep1-modbus._tcp";
 #else
 const char SERVICE_LABEL[] = "_blep1-unknown._unknown";
@@ -92,7 +92,7 @@ void main(void) {
 	int err;
 	LOG_INF("Starting..");
 
-#if CONFIG_BLEP1_SERIAL
+#if CONFIG_OPENP1_SERIAL
 	err = uart_p1_init(&rx_pipe, &tx_pipe);
 	if (err < 0) {
 		LOG_ERR("Could not init uart (err %d)", err);
@@ -124,11 +124,13 @@ void main(void) {
 		return;
 	}
 
+#if CONFIG_OPENP1_LOG_TCP
 	err = tcp_log_server_start();
 	if (err < 0) {
 		LOG_ERR("Could not initalize tcp log server");
 		return;
 	}
+#endif
 
 	err = service_registration();
 	if (err < 0) {

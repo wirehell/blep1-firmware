@@ -1,7 +1,7 @@
 #ifndef MODBUS_H
 #define MODBUS_H
 
-#include "lib/blep1.h"
+#include "lib/openp1.h"
 #include "lib/telegram.h"
 #include "lib/value_store.h"
 

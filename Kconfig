@@ -1,60 +1,60 @@
-mainmenu "Blep1 application"
+mainmenu "OpenP1 application"
 
-config BLEP1_SIM_DATA_ENABLED
+config OPENP1_SIM_DATA_ENABLED
   bool "Create some simulated data"
   default y
 
-choice BLEP1_DATA_SOURCE
+choice OPENP1_DATA_SOURCE
   bool "Choice of data source"
-  default BLEP1_UART_DATA_SOURCE
+  default OPENP1_UART_DATA_SOURCE
 
-config BLEP1_UART_DATA_SOURCE
+config OPENP1_UART_DATA_SOURCE
   bool "Read data from UART"
-  depends on BLEP1_SERIAL
+  depends on OPENP1_SERIAL
 
-config BLEP1_SIM_DATA_SOURCE
+config OPENP1_SIM_DATA_SOURCE
   bool "Read data directly from simulator"
 endchoice
 
-config BLEP1_SERIAL
+config OPENP1_SERIAL
   bool "Receive data from UART"
   default y
 
-config BLEP1_SIM_UART_OUT
+config OPENP1_SIM_UART_OUT
   bool "Send dummy data over tx line"
   default y
-  depends on BLEP1_UART_DATA_SOURCE
+  depends on OPENP1_UART_DATA_SOURCE
 
-config BLEP_IGNORE_UNKNOWN
+config OPENP1_IGNORE_UNKNOWN
   bool "Ignore unknown OBIS fields"
   default y
 
-config BLEP_IGNORE_PARSING_ERRORS
+config OPENP1_IGNORE_PARSING_ERRORS
   bool "Ignore fields with parsing errors"
   default y
 
-choice BLEP_SOCKET_TYPE
+choice OPENP1_SOCKET_TYPE
   bool "Socket type"
-  default BLEP_UDP
+  default OPENP1_UDP
 
-config BLEP_TCP
+config OPENP1_TCP
   bool "Use TCP socket"
   depends on NET_TCP
 
-config BLEP_UDP
+config OPENP1_UDP
   bool "Use UDP socket"
   depends on NET_UDP
 endchoice
 
-config BLEP_HOSTNAME
+config OPENP1_HOSTNAME
   string "Hostname"
   default "blep-device"
 
-config BLEP_SRP_INSTANCE_NAME
+config OPENP1_SRP_INSTANCE_NAME
   string "SRP instance name"
-  default "BLEP1 device"
+  default "OPENP1 device name"
 
-config BLEP_LOG_TCP
+config OPENP1_LOG_TCP
   bool "Use TCP server for sending logs"
   default y
 

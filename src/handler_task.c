@@ -6,7 +6,7 @@
 #include "handler_task.h"
 
 #include "lib/telegram.h"
-#include "lib/blep1.h"
+#include "lib/openp1.h"
 
 LOG_MODULE_REGISTER(handler_task, LOG_LEVEL_DBG);
 

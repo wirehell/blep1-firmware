@@ -4,7 +4,7 @@
 #include <zephyr/net/buf.h>
 
 #include "lib/parser.h"
-#include "lib/blep1.h"
+#include "lib/openp1.h"
 
 LOG_MODULE_REGISTER(parser_task, LOG_LEVEL_DBG);
 

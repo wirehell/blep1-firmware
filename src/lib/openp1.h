@@ -1,5 +1,5 @@
-#ifndef BLEP1_HEADER_H
-#define BLEP1_HEADER_H
+#ifndef OPENP1_HEADER_H
+#define OPENP1_HEADER_H
 
 #include <zephyr/types.h>
 
@@ -44,4 +44,4 @@ struct data_definition {
 
 extern const struct data_definition data_definition_table[];
 
-#endif /* BLEP1_HEADER_H */
+#endif /* OPENP1_HEADER_H */

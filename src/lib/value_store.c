@@ -1,6 +1,6 @@
 
 #include "value_store.h"
-#include "blep1.h"
+#include "openp1.h"
 #include "stdint.h"
 
 #include <zephyr/kernel.h>

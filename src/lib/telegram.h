@@ -3,7 +3,7 @@
 
 #include <sys/types.h>
 
-#include "blep1.h"
+#include "openp1.h"
 
 union data_value {
         uint32_t double_long_unsigned;

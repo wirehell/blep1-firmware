@@ -7,7 +7,7 @@
 
 #include "uart_p1.h"
 
-#if CONFIG_BLEP1_SERIAL
+#if CONFIG_OPENP1_SERIAL
 
 #define READ_TIMEOUT_MS 200
 #define MAX_TELEGRAM_SIZE 8192

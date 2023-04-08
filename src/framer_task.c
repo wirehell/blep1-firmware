@@ -4,7 +4,7 @@
 #include <sys/types.h>
 
 #include "framer_task.h"
-#include "lib/blep1.h"
+#include "lib/openp1.h"
 #include "line_log.h"
 #include "lib/telegram_framer.h"
 

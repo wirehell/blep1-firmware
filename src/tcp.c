@@ -7,7 +7,7 @@
 
 #include <sys/types.h>
 
-#if CONFIG_BLEP_TCP
+#if CONFIG_OPENP1_TCP
 
 LOG_MODULE_REGISTER(tcp, LOG_LEVEL_DBG);
 

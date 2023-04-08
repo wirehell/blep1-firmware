@@ -1,7 +1,7 @@
 
 #include "modbus.h"
 #include "lib/value_store.h"
-#include "lib/blep1.h"
+#include "lib/openp1.h"
 #include "udp.h"
 #include "tcp.h"
 
@@ -125,9 +125,9 @@ static int send_reply(int socket) {
 	// Size is checked earlier
 	memcpy(&tx_buf[MODBUS_MBAP_AND_FC_LENGTH], tx_adu.data, tx_adu.length);
 
-	#if CONFIG_BLEP_UDP
+	#if CONFIG_OPENP1_UDP
 	return udp_server_send(tx_buf, MODBUS_MBAP_AND_FC_LENGTH + tx_adu.length);
-	#elif CONFIG_BLEP_TCP
+	#elif CONFIG_OPENP1_TCP
 	return tcp_server_send(socket, tx_buf, MODBUS_MBAP_AND_FC_LENGTH + tx_adu.length);
 	#else
 	LOG_ERR("Unknown transport");
@@ -136,7 +136,7 @@ static int send_reply(int socket) {
 
 }
 
-#if CONFIG_BLEP_UDP
+#if CONFIG_OPENP1_UDP
 static int on_message_received(struct request *request) {
 #else
 static int on_message_received(struct tcp_request *request) {
@@ -172,18 +172,18 @@ static int on_message_received(struct tcp_request *request) {
 		modbus_raw_set_server_failure(&tx_adu);
 	}
 
-	#if CONFIG_BLEP_UDP
+	#if CONFIG_OPENP1_UDP
 	return send_reply(0);
 	#else
 	return send_reply(request->socket);
 	#endif
 }
 
-#if CONFIG_BLEP_UDP
+#if CONFIG_OPENP1_UDP
 struct message_handler handler = {
 	.on_message_recived_cb = on_message_received,
 };
-#elif CONFIG_BLEP_TCP
+#elif CONFIG_OPENP1_TCP
 struct tcp_message_handler handler = {
 	.on_message_recived_cb = on_message_received,
 };
@@ -194,11 +194,11 @@ int modbus_init(struct value_store *store) {
 
 	value_store = store;
 
-	#if CONFIG_BLEP_UDP
+	#if CONFIG_OPENP1_UDP
     if (udp_server_init(&handler) < 0) {
         return -1;
     }
-	#elif CONFIG_BLEP_TCP
+	#elif CONFIG_OPENP1_TCP
 	if (tcp_server_init(&handler) < 0) {
 		return -1;
 	}

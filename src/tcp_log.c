@@ -8,7 +8,7 @@
 #include <zephyr/logging/log_backend_std.h>
 
 
-#if CONFIG_BLEP_LOG_TCP
+#if CONFIG_OPENP1_LOG_TCP
 
 #define PIPE_BUFFER_SIZE 2048
 K_PIPE_DEFINE(log_pipe, PIPE_BUFFER_SIZE, 4);

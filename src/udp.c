@@ -4,7 +4,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
 
-#if CONFIG_BLEP_UDP
+#if CONFIG_OPENP1_UDP
 
 LOG_MODULE_REGISTER(udp, LOG_LEVEL_DBG);
 

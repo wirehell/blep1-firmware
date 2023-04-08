@@ -6,7 +6,7 @@
 #include <math.h>
 #include <time.h>
 
-#if CONFIG_BLEP1_SIM_DATA_ENABLED
+#if CONFIG_OPENP1_SIM_DATA_ENABLED
 
 #define STACKSIZE 1024
 #define PRIORITY 7
@@ -14,7 +14,7 @@
 extern struct k_pipe rx_pipe; 
 extern struct k_pipe tx_pipe; 
 
-#if CONFIG_BLEP1_UART_DATA_SOURCE
+#if CONFIG_OPENP1_UART_DATA_SOURCE
 #define SIM_OUTPUT &tx_pipe
 #else
 #define SIM_OUTPUT &rx_pipe
