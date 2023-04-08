@@ -1,0 +1,13 @@
+name: Build
+on:
+  push:
+    branches: [ main ]
+jobs:
+  container-test-job:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/zephyrproject-rtos/zephyr-build:latest
+      options: --cpus 1
+    steps:
+      - name: Test
+        run: ls
