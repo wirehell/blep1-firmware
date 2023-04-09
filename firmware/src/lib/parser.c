@@ -256,7 +256,7 @@ int check_unit(struct parser *parser, char *unit, enum Unit expected_unit) {
     }
 
     if (unit == NULL) {
-        LOG_ERR("Expected a unit (%s), but recived none", unit);
+        LOG_ERR("Expected a unit (%d), but recived none", expected_unit);
         return -1;
     }
 
