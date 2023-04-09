@@ -9,16 +9,20 @@ jobs:
       image: ghcr.io/zephyrproject-rtos/ci:v0.26.0
       options: --cpus 1
     steps:
-      - name: Find cmake
-        run: find /root
-      - name: Cat cmake
-        run: cat /root/.cmake/packages/Zephyr-sdk/*
       - uses: actions/checkout@v3
         with:
           path: zephyr_workspace/openp1
       - name: West init 
         run: west init -l openp1
         working-directory: zephyr_workspace
+      - name: Caching of Zephyr and modules
+        id: zephyr-cache
+        uses: actions/cache@v3
+        env:
+          cache-name: cache_zephyr_modules
+        with:
+          path: zephyr_workspace/external-code
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('zephyr_workspace/openp1/west.yml') }}
       - name: West update 
         run: west update
         working-directory: zephyr_workspace

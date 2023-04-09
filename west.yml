@@ -7,3 +7,4 @@ manifest:
       remote: zephyrproject-rtos
       revision: v3.3.0
       import: west.yml
+        path-prefix: external-code
