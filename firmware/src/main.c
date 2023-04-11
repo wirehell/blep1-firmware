@@ -3,12 +3,14 @@
 #include "lib/telegram.h"
 #include "lib/value_store.h"
 
+#include "thread_mgmt.h"
 #include "uart_p1.h"
 #include "framer_task.h"
 #include "parser_task.h"
 #include "handler_task.h"
 #include "modbus.h"
 #include "tcp_log.h"
+#include "input.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -87,6 +89,31 @@ static int service_registration() {
 
 #endif
 
+void on_button_pressed() {
+    LOG_INF("Button pressed");
+}
+
+void on_button_released() {
+    LOG_INF("Button released");
+}
+
+void on_button_short_press_released() {
+    LOG_INF("Button short press released");
+}
+
+void on_button_long_press_released() {
+    LOG_INF("Button long press released");
+}
+
+void on_button_long_press_detected() {
+    LOG_INF("Button long press detected");
+}
+
+struct button_cb button_callbacks = {
+	.on_button_short_press_released = thread_join_attempt,
+	.on_button_long_press_detected = thread_factory_reset,
+};
+
 
 void main(void) {
 	int err;
@@ -128,6 +155,14 @@ void main(void) {
 	err = tcp_log_server_start();
 	if (err < 0) {
 		LOG_ERR("Could not initalize tcp log server");
+		return;
+	}
+#endif
+
+#if CONFIG_GPIO
+	err = input_init(&button_callbacks);
+	if (err < 0) {
+		LOG_ERR("Could not initialize input");
 		return;
 	}
 #endif
