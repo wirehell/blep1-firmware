@@ -11,6 +11,7 @@
 #include "modbus.h"
 #include "tcp_log.h"
 #include "input.h"
+#include "watchdog.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -89,26 +90,6 @@ static int service_registration() {
 
 #endif
 
-void on_button_pressed() {
-    LOG_INF("Button pressed");
-}
-
-void on_button_released() {
-    LOG_INF("Button released");
-}
-
-void on_button_short_press_released() {
-    LOG_INF("Button short press released");
-}
-
-void on_button_long_press_released() {
-    LOG_INF("Button long press released");
-}
-
-void on_button_long_press_detected() {
-    LOG_INF("Button long press detected");
-}
-
 struct button_cb button_callbacks = {
 	.on_button_short_press_released = thread_join_attempt,
 	.on_button_long_press_detected = thread_factory_reset,
@@ -118,6 +99,8 @@ struct button_cb button_callbacks = {
 void main(void) {
 	int err;
 	LOG_INF("Starting..");
+
+	thread_join_attempt();
 
 #if CONFIG_OPENP1_SERIAL
 	err = uart_p1_init(&rx_pipe, &tx_pipe);
@@ -172,6 +155,16 @@ void main(void) {
 		LOG_ERR("Could not start service registration");
 		return;
 	}
+
+#if CONFIG_WATCHDOG
+	err = watchdog_init();
+	/*
+	if (err < 0) {
+		LOG_ERR("Could not init watchdog (err %d)", err);
+		return;
+	}
+	*/
+#endif
 
 	LOG_INF("Up and running..");
 
