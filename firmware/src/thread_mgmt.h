@@ -2,6 +2,7 @@
 #define THREAD_MGMT_HEADER_H
 
 
+int thread_up();
 void thread_factory_reset();
 void thread_join_attempt();
 

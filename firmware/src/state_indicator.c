@@ -32,7 +32,9 @@ const struct rgb_color MAGENTA =    { .red = 0xff , .green = 0x00, .blue = 0xff 
 const struct rgb_color RED =        { .red = 0xff , .green = 0x00, .blue = 0x00 };
 const struct rgb_color GREEN =      { .red = 0x00 , .green = 0xff, .blue = 0x00 };
 const struct rgb_color YELLOW =     { .red = 0xff , .green = 0xff, .blue = 0x00 };
+const struct rgb_color ORANGE =     { .red = 0xff , .green = 0x7f, .blue = 0x00 };
 const struct rgb_color BLUE =       { .red = 0x00 , .green = 0xff, .blue = 0xff };
+const struct rgb_color PURPLE =     { .red = 0x7f , .green = 0x00, .blue = 0xff };
 const struct rgb_color WHITE =      { .red = 0xff , .green = 0xff, .blue = 0xff };
 const struct rgb_color CYAN =       { .red = 0x00 , .green = 0xff, .blue = 0xff };
 const struct rgb_color BLACK =      { .red = 0x00 , .green = 0x00, .blue = 0x00 };
@@ -44,14 +46,15 @@ const struct pulse_pattern MEDIUM = { .on_ms = 100,     .interval = 500     };
 const struct pulse_pattern FAST =   { .on_ms = 50,      .interval = 200     };
 
 static const struct state_indication indications[__NUM_STATES] = {
-    { .color = &MAGENTA,    .pattern = &ON },
-    { .color = &RED,        .pattern = &ON },
-    { .color = &CYAN,       .pattern = &ON },
-    { .color = &YELLOW,     .pattern = &FAST },
-    { .color = &YELLOW,     .pattern = &SLOW },
-    { .color = &GREEN,      .pattern = &MEDIUM },
-    { .color = &BLUE,       .pattern = &SLOW },
-    { .color = &WHITE,      .pattern = &SLOW },
+    { .color = &MAGENTA,    .pattern = &ON },       /* INIT */
+    { .color = &RED,        .pattern = &ON },       /* ERROR */
+    { .color = &CYAN,       .pattern = &ON },       /* STARTED */
+    { .color = &YELLOW,     .pattern = &SLOW },     /* NOT_COMSISSIONED */
+    { .color = &YELLOW,     .pattern = &FAST },     /* JOINING_NETWORK */
+    { .color = &ORANGE,     .pattern = &ON },       /* JOINING_FAILED */
+    { .color = &PURPLE,     .pattern = &MEDIUM },   /* AWAITING_ROUTES */
+    { .color = &BLUE,       .pattern = &SLOW },     /* CONNECTED */
+    { .color = &WHITE,      .pattern = &SLOW },     /* ACTIVE */
 };
 
 K_SEM_DEFINE(state_updatable, 1, 1);

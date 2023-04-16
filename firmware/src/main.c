@@ -104,47 +104,43 @@ void main(void) {
 	int err;
 	LOG_INF("Starting..");
 
-#if CONFIG_OPENTHREAD
-	thread_join_attempt();
-#endif
-
 #if CONFIG_OPENP1_SERIAL
 	err = uart_p1_init(&rx_pipe, &tx_pipe);
 	if (err < 0) {
 		LOG_ERR("Could not init uart (err %d)", err);
-		return;
+		goto fail;
 	}
 #endif
 
 	err = framer_task_init(&rx_pipe, &telegram_frame_fifo);
 	if (err < 0) {
 		LOG_ERR("Could not init parser task (err %d)", err);
-		return;
+		goto fail;
 	}
 
 	err = parser_task_init(&telegram_frame_fifo, &telegram_queue);
 	if (err < 0) {
 		LOG_ERR("Could not init parser task (err %d)", err);
-		return;
+		goto fail;
 	}
 
 	err = handler_task_init(&telegram_queue, &update_data_store);
 	if (err < 0) {
 		LOG_ERR("Could not init handler task (err %d)", err);
-		return;
+		goto fail;
 	}
 
 	err = modbus_init(&value_store);
 	if (err < 0) {
 		LOG_ERR("Could not initalize Modbus server");
-		return;
+		goto fail;
 	}
 
 #if CONFIG_OPENP1_LOG_TCP
 	err = tcp_log_server_start();
 	if (err < 0) {
 		LOG_ERR("Could not initalize tcp log server");
-		return;
+		goto fail;
 	}
 #endif
 
@@ -152,14 +148,14 @@ void main(void) {
 	err = input_init(&button_callbacks);
 	if (err < 0) {
 		LOG_ERR("Could not initialize input");
-		return;
+		goto fail;
 	}
 #endif
 
 	err = service_registration();
 	if (err < 0) {
 		LOG_ERR("Could not start service registration");
-		return;
+		goto fail;
 	}
 
 #if CONFIG_WATCHDOG
@@ -172,13 +168,21 @@ void main(void) {
 	*/
 #endif
 
-	LOG_INF("Up and running..");
-
-	k_sleep(K_SECONDS(3));
 	state_indicator_set_state(STARTED);
+
+#if CONFIG_OPENTHREAD
+	thread_up();
+#endif
+
+	LOG_INF("Up and running..");
 
 	while (true) {
 		k_sleep(K_SECONDS(1));
 	}
+
+	fail:
+	state_indicator_set_state(ERROR);
+	k_sleep(K_MSEC(5000));
+
 }
 

@@ -9,6 +9,7 @@ enum indicator_state {
     INIT,
     ERROR,
     STARTED,
+    NOT_COMISSIONED,
     JOINING_NETWORK,
     JOINING_FAILED,
     AWAITING_ROUTES,
