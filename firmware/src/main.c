@@ -3,6 +3,7 @@
 #include "lib/telegram.h"
 #include "lib/value_store.h"
 
+#include "state_indicator.h"
 #include "thread_mgmt.h"
 #include "uart_p1.h"
 #include "framer_task.h"
@@ -15,9 +16,12 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+
+#if CONFIG_OPENTHREAD
 #include <zephyr/net/openthread.h>
 #include <openthread/srp_client.h>
 #include <openthread/instance.h>
+#endif
 
 K_PIPE_DEFINE(rx_pipe, 4096, 4);
 K_PIPE_DEFINE(tx_pipe, 4096, 4);
@@ -100,7 +104,9 @@ void main(void) {
 	int err;
 	LOG_INF("Starting..");
 
+#if CONFIG_OPENTHREAD
 	thread_join_attempt();
+#endif
 
 #if CONFIG_OPENP1_SERIAL
 	err = uart_p1_init(&rx_pipe, &tx_pipe);
@@ -167,6 +173,9 @@ void main(void) {
 #endif
 
 	LOG_INF("Up and running..");
+
+	k_sleep(K_SECONDS(3));
+	state_indicator_set_state(STARTED);
 
 	while (true) {
 		k_sleep(K_SECONDS(1));

@@ -1,9 +1,11 @@
 #include "watchdog.h"
 
 #include <zephyr/device.h>
-#include <zephyr/drivers/watchdog.h>
 #include <zephyr/logging/log.h>
 
+#if CONFIG_WATCHDOG
+
+#include <zephyr/drivers/watchdog.h>
 LOG_MODULE_REGISTER(openp1_watchdog, LOG_LEVEL_DBG);
 
 #define WDT_NODE DT_ALIAS(watchdog0)
@@ -57,7 +59,4 @@ void watchdog_feed(enum watchdog dog) {
 }
 
 
-
-
-
-
+#endif

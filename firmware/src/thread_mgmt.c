@@ -1,8 +1,11 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/device.h>
-#include <zephyr/net/openthread.h>
 
+
+#if CONFIG_OPENTHREAD
+
+#include <zephyr/net/openthread.h>
 #include <openthread/dataset.h>
 #include <openthread/instance.h>
 #include <openthread/joiner.h>
@@ -120,3 +123,4 @@ ok:
 
 }
 
+#endif
