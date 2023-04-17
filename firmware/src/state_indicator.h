@@ -18,6 +18,7 @@ enum indicator_state {
     __NUM_STATES,
 };
 
+enum indicator_state state_indicator_get_state();
 void state_indicator_set_state(enum indicator_state state);
 void state_indicator_notify_telegram();
 

@@ -7,7 +7,7 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 
-LOG_MODULE_REGISTER(state_indicator, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(state_indicator, LOG_LEVEL_INF);
 
 #define STACKSIZE 512
 #define PRIORITY 5
@@ -33,7 +33,7 @@ const struct rgb_color RED =        { .red = 0xff , .green = 0x00, .blue = 0x00 
 const struct rgb_color GREEN =      { .red = 0x00 , .green = 0xff, .blue = 0x00 };
 const struct rgb_color YELLOW =     { .red = 0xff , .green = 0xff, .blue = 0x00 };
 const struct rgb_color ORANGE =     { .red = 0xff , .green = 0x7f, .blue = 0x00 };
-const struct rgb_color BLUE =       { .red = 0x00 , .green = 0xff, .blue = 0xff };
+const struct rgb_color BLUE =       { .red = 0x00 , .green = 0x00, .blue = 0xff };
 const struct rgb_color PURPLE =     { .red = 0x7f , .green = 0x00, .blue = 0xff };
 const struct rgb_color WHITE =      { .red = 0xff , .green = 0xff, .blue = 0xff };
 const struct rgb_color CYAN =       { .red = 0x00 , .green = 0xff, .blue = 0xff };
@@ -135,7 +135,14 @@ static void state_indicator_entry(void *, void *, void *) {
     }
 }
 
+enum indicator_state state_indicator_get_state() {
+    return state_indicator.current_state;
+}
+
 void state_indicator_set_state(enum indicator_state state) {
+    if (state == state_indicator.current_state) {
+        return;
+    }
     int ret = k_sem_take(&state_updatable, K_MSEC(1000));
     if (ret < 0) {
         LOG_ERR("Could not update state. State: %d, Error: %d", state, ret);
