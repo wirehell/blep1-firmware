@@ -82,11 +82,12 @@ int uart_p1_init(struct k_pipe *output, struct k_pipe *tx) {
 	}
 	uart_irq_rx_enable(uart_dev);
 
+    LOG_INF("Uart initialized");
     initialized = 1;
     return 0;
 }
 
-#if CONFIG_BLEP1_SIM_UART_OUT
+#if CONFIG_OPENP1_SIM_UART_OUT
 
 #define STACKSIZE 1024
 #define PRIORITY 7

@@ -181,6 +181,7 @@ void main(void) {
 	}
 
 	fail:
+	LOG_ERR("Error");
 	state_indicator_set_state(ERROR);
 	k_sleep(K_MSEC(5000));
 
