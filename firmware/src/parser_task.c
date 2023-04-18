@@ -58,4 +58,4 @@ void parser_task(void *, void *, void *) {
 
 K_THREAD_DEFINE(parser_task_thread, STACKSIZE,
                 parser_task, NULL, NULL, NULL,
-                PRIORITY, 0, 0);
+                PRIORITY, K_ESSENTIAL, 0);

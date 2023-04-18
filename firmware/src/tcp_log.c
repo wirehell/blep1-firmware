@@ -97,8 +97,9 @@ static int log_shipping(int client) {
 static void tcp_connection_handler(void *ptr1, void *ptr2, void *ptr3) {
 	struct sockaddr_in6 client_addr;
 	socklen_t client_addr_len = sizeof(client_addr);
-  int ret = 0;
-  do {
+
+  while (true) {
+
     printk("Waiting for TCP connection on port %d...", TCP_LOG_PORT);
 
     int client = accept(log_socket, (struct sockaddr *)&client_addr, &client_addr_len);
@@ -115,16 +116,28 @@ static void tcp_connection_handler(void *ptr1, void *ptr2, void *ptr3) {
       printk("Accepted connection from %s", buf);
     }
 
+    struct timeval timeout;
+    timeout.tv_sec = 15;
+    timeout.tv_usec = 0;
+
+    int ret = setsockopt(log_socket, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+    if (ret < 0) {
+      printk("Couldn't set socket timeout");
+      close(client);
+      continue;
+    }
+
     log_shipping(client);
 
     k_sleep(K_MSEC(500));
-  } while (ret == 0);
+
+  } 
 
 }
 
 K_THREAD_DEFINE(log_shipping_thread, STACKSIZE,
                 tcp_connection_handler, NULL, NULL, NULL,
-                PRIORITY, 0, -1);
+                PRIORITY, K_ESSENTIAL, -1);
 
 
 struct sockaddr_in6 addr;

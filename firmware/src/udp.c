@@ -64,7 +64,7 @@ int udp_server_send(uint8_t *buf, int len) {
 
 K_THREAD_DEFINE(udp_thread_id, STACK_SIZE,
     receive_udp_task, NULL, NULL, NULL,
-    RECEIVE_THREAD_PRIORITY, 0, -1);
+    RECEIVE_THREAD_PRIORITY, K_ESSENTIAL, -1);
 
 int udp_server_init(struct message_handler *handler) {
 

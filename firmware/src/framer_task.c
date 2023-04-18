@@ -72,4 +72,4 @@ void framer_task(void *user_data) {
 
 K_THREAD_DEFINE(framer_task_thread, STACKSIZE,
                 framer_task, NULL, NULL, NULL,
-                PRIORITY, 0, 0);
+                PRIORITY, K_ESSENTIAL, 0);

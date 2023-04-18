@@ -59,4 +59,4 @@ void handler_task(void *, void *, void *) {
 
 K_THREAD_DEFINE(handler_task_thread, STACKSIZE,
                 handler_task, NULL, NULL, NULL,
-                PRIORITY, 0, 0);
+                PRIORITY, K_ESSENTIAL, 0);

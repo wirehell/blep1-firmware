@@ -70,7 +70,7 @@ void link_monitor_task(void *, void *, void *) {
 
 K_THREAD_DEFINE(link_monitor_thread, STACKSIZE,
                 link_monitor_task, NULL, NULL, NULL,
-                PRIORITY, 0, 0);
+                PRIORITY, K_ESSENTIAL, 0);
 
 
 #endif

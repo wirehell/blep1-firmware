@@ -118,7 +118,7 @@ void test_tx(void *, void *, void *) {
 
 K_THREAD_DEFINE(test_tx_thread, STACKSIZE,
                 test_tx, NULL, NULL, NULL,
-                PRIORITY, 0, 0);
+                PRIORITY, K_ESSENTIAL, 0);
 
 #endif
     

@@ -104,6 +104,15 @@ void main(void) {
 	int err;
 	LOG_INF("Starting..");
 
+#if CONFIG_WATCHDOG
+	err = watchdog_init();
+	if (err < 0) {
+		LOG_ERR("Could not init watchdog (err %d)", err);
+		goto fail;
+	}
+#endif
+
+
 #if CONFIG_OPENP1_SERIAL
 	err = uart_p1_init(&rx_pipe, &tx_pipe);
 	if (err < 0) {
@@ -157,16 +166,6 @@ void main(void) {
 		LOG_ERR("Could not start service registration");
 		goto fail;
 	}
-
-#if CONFIG_WATCHDOG
-	err = watchdog_init();
-	/*
-	if (err < 0) {
-		LOG_ERR("Could not init watchdog (err %d)", err);
-		return;
-	}
-	*/
-#endif
 
 	state_indicator_set_state(STARTED);
 

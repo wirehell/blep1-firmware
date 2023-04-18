@@ -174,4 +174,4 @@ void state_indicator_notify_telegram() {
 
 K_THREAD_DEFINE(state_indicator_task, STACKSIZE,
                 state_indicator_entry, NULL, NULL, NULL,
-                PRIORITY, 0, 0);
+                PRIORITY, K_ESSENTIAL, 0);
