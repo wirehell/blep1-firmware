@@ -116,17 +116,6 @@ static void tcp_connection_handler(void *ptr1, void *ptr2, void *ptr3) {
       printk("Accepted connection from %s", buf);
     }
 
-    struct timeval timeout;
-    timeout.tv_sec = 15;
-    timeout.tv_usec = 0;
-
-    int ret = setsockopt(log_socket, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
-    if (ret < 0) {
-      printk("Couldn't set socket timeout");
-      close(client);
-      continue;
-    }
-
     log_shipping(client);
 
     k_sleep(K_MSEC(500));

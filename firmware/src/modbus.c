@@ -4,13 +4,28 @@
 #include "lib/openp1.h"
 #include "udp.h"
 #include "tcp.h"
+#include "watchdog.h"
+#include "state_indicator.h"
 
 #include <stdint.h>
 #include <zephyr/modbus/modbus.h>
+#include <sys/types.h>
 
 LOG_MODULE_REGISTER(modbus_server, LOG_LEVEL_DBG);
 
 K_SEM_DEFINE(response_ready, 0, 1);
+
+static void modbus_activity_timer_expiry(struct k_timer *timer) {
+	state_indicator_set_state(CONNECTED); // Not necessarily true, but link monitor will watch further
+}
+
+K_TIMER_DEFINE(modbus_activity_timer, modbus_activity_timer_expiry, NULL);
+
+static void modbus_activity_notify() {
+	k_timer_start(&modbus_activity_timer, K_SECONDS(120), K_NO_WAIT);
+	state_indicator_set_state(ACTIVE);
+	watchdog_feed(MODBUS_READ);
+}
  
 static int server_iface = -1;
 static struct value_store *value_store;
@@ -120,19 +135,26 @@ const static struct modbus_iface_param server_param = {
 };
 
 static int send_reply(int socket) {
+	int ret;
 	uint8_t tx_buf[SEND_BUFFER_SIZE];
 	modbus_raw_put_header(&tx_adu, tx_buf);
 	// Size is checked earlier
 	memcpy(&tx_buf[MODBUS_MBAP_AND_FC_LENGTH], tx_adu.data, tx_adu.length);
 
 	#if CONFIG_OPENP1_UDP
-	return udp_server_send(tx_buf, MODBUS_MBAP_AND_FC_LENGTH + tx_adu.length);
+	ret = udp_server_send(tx_buf, MODBUS_MBAP_AND_FC_LENGTH + tx_adu.length);
 	#elif CONFIG_OPENP1_TCP
-	return tcp_server_send(socket, tx_buf, MODBUS_MBAP_AND_FC_LENGTH + tx_adu.length);
+	ret = tcp_server_send(socket, tx_buf, MODBUS_MBAP_AND_FC_LENGTH + tx_adu.length);
 	#else
 	LOG_ERR("Unknown transport");
-	return -1;
+	ret = -1;
 	#endif
+
+	if (ret == 0) {
+		modbus_activity_notify();
+	}
+
+	return ret;
 
 }
 

@@ -151,7 +151,7 @@ int tcp_server_send(int socket, uint8_t *buf, int len) {
     ret = -errno;
   }
   LOG_INF("Sent reply: %d bytes", len);
-   return 0;
+  return 0;
 }
 
 K_THREAD_DEFINE(tcp_thread_id, STACK_SIZE,

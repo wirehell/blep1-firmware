@@ -8,6 +8,7 @@
 #include "lib/telegram.h"
 #include "lib/openp1.h"
 #include "state_indicator.h"
+#include "watchdog.h"
 
 
 LOG_MODULE_REGISTER(handler_task, LOG_LEVEL_DBG);
@@ -52,6 +53,7 @@ void handler_task(void *, void *, void *) {
             LOG_INF("Handler task received telegram");
             state_indicator_notify_telegram();
             handle_telegram(telegram);
+            watchdog_feed(TELEGRAM_RECEIVED);
             telegram_free(telegram);
         }
     }
